@@ -18,18 +18,29 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const [restaurantsSnap, eventsSnap] = await Promise.all([
-          getDocs(query(collection(db, 'restaurants'), orderBy('taste_score', 'desc'), limit(6))),
-          getDocs(query(
-            collection(db, 'restaurant_events'), 
-            where('start_date', '>=', new Date().toISOString().split('T')[0]), 
-            orderBy('start_date', 'asc'), 
-            limit(4)
-          ))
-        ]);
+      setLoading(true);
 
-        setTopRestaurants(restaurantsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as Restaurant[]);
+      // 1. Fetch Restaurants Independently
+      try {
+        const restaurantsSnap = await getDocs(collection(db, 'restaurants'));
+        const restaurants = restaurantsSnap.docs
+          .map(d => ({ id: d.id, ...d.data() } as Restaurant))
+          .filter(r => r.taste_score !== undefined && r.taste_score !== null)
+          .sort((a, b) => (b.taste_score || 0) - (a.taste_score || 0))
+          .slice(0, 6);
+        setTopRestaurants(restaurants);
+      } catch (error) {
+        console.error("RESTAURANT FETCH ERROR:", error);
+      }
+
+      // 2. Fetch Events Independently
+      try {
+        const eventsSnap = await getDocs(query(
+          collection(db, 'restaurant_events'), 
+          where('start_date', '>=', new Date().toISOString().split('T')[0]), 
+          orderBy('start_date', 'asc'), 
+          limit(4)
+        ));
         
         const evsData = await Promise.all(eventsSnap.docs.map(async (d) => {
           const ev = { id: d.id, ...d.data() } as any;
@@ -41,10 +52,10 @@ export default function Home() {
         }));
         setEvents(evsData as RestaurantEvent[]);
       } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+        console.error("EVENT FETCH ERROR:", error);
       }
+
+      setLoading(false);
     };
     fetchData();
   }, []);
@@ -194,13 +205,17 @@ export default function Home() {
 
         {loading ? (
           <LoadingSpinner label="Loading restaurants…" />
-        ) : (
+        ) : topRestaurants.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {topRestaurants.map((r, i) => (
               <div key={r.id} className="animate-slide-up" style={{ animationDelay: `${i * 0.07}s` }}>
                 <RestaurantCard restaurant={r} showMPS />
               </div>
             ))}
+          </div>
+        ) : (
+          <div className="text-center py-10">
+            <p className="text-[var(--text-muted)] text-lg">No restaurants available right now.</p>
           </div>
         )}
       </section>

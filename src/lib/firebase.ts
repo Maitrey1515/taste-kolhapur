@@ -15,6 +15,12 @@ export const isFirebaseConfigured =
   Boolean(firebaseConfig.apiKey) && firebaseConfig.apiKey !== 'YOUR_FIREBASE_API_KEY' &&
   Boolean(firebaseConfig.projectId) && firebaseConfig.projectId !== 'YOUR_FIREBASE_PROJECT_ID';
 
+if (!isFirebaseConfigured) {
+  console.error(
+    'Firebase configuration is missing or incomplete. Check Vercel environment variables.'
+  );
+}
+
 // Create client — if not configured, create with dummy values to prevent crashes
 export const app = initializeApp(isFirebaseConfigured ? firebaseConfig : {
   apiKey: "mock-key",
