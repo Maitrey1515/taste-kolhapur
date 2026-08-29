@@ -1,11 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { isSupabaseConfigured } from '@/lib/supabase';
 
 // Layouts & shared
 import Navbar from '@/components/Navbar';
 import ChatWindow from '@/components/ChatWindow';
-import SupabaseBanner from '@/components/SupabaseBanner';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 // Customer pages
@@ -20,17 +18,19 @@ import CustomerDashboard from '@/pages/CustomerDashboard';
 import VerifyVisit from '@/pages/VerifyVisit';
 
 // Owner pages
-import ClaimRestaurant from '@/pages/ClaimRestaurant';
+import AddRestaurant from '@/pages/AddRestaurant';
 import OwnerDashboard from '@/pages/OwnerDashboard';
 
 // Admin pages
 import AdminDashboard from '@/pages/AdminDashboard';
+import Seed from '@/pages/Seed';
 
 // ─── Route Guards ─────────────────────────────────────────────────────────
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
   if (loading) return <LoadingSpinner fullScreen />;
-  if (!user) return <Navigate to="/auth" replace />;
+  if (!user) return <Navigate to={`/auth?returnTo=${encodeURIComponent(location.pathname)}`} replace />;
   return <>{children}</>;
 }
 
@@ -60,7 +60,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[var(--surface)] transition-colors duration-300">
-      {!isSupabaseConfigured && <SupabaseBanner />}
       <Navbar />
 
       <Routes>
@@ -79,9 +78,9 @@ export default function App() {
           <RequireAuth><CustomerDashboard /></RequireAuth>
         } />
 
-        {/* Owner claim (any authenticated user can start a claim) */}
-        <Route path="/claim/:id" element={
-          <RequireAuth><ClaimRestaurant /></RequireAuth>
+        {/* Owner registration (any authenticated user can register a restaurant) */}
+        <Route path="/add-restaurant" element={
+          <RequireAuth><AddRestaurant /></RequireAuth>
         } />
 
         {/* Owner panel */}
@@ -93,6 +92,9 @@ export default function App() {
         <Route path="/admin" element={
           <RequireAdmin><AdminDashboard /></RequireAdmin>
         } />
+
+        {/* Temporary Seed route */}
+        <Route path="/seed" element={<Seed />} />
 
         {/* 404 */}
         <Route path="*" element={<Navigate to="/" replace />} />

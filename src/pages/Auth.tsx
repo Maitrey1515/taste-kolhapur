@@ -8,7 +8,7 @@ import clsx from 'clsx';
 export default function Auth() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { signIn, signUp, resetPassword, user } = useAuth();
+  const { signIn, signUp, signInWithGoogle, resetPassword, user } = useAuth();
   
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>(searchParams.get('tab') as any || 'signin');
   const [email, setEmail] = useState('');
@@ -17,8 +17,11 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) navigate('/dashboard', { replace: true });
-  }, [user, navigate]);
+    if (user) {
+      const returnTo = searchParams.get('returnTo');
+      navigate(returnTo || '/dashboard', { replace: true });
+    }
+  }, [user, navigate, searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +43,26 @@ export default function Auth() {
         setMode('signin');
       }
     } catch (err: any) {
-      showToast({ type: 'error', title: 'Authentication failed', message: err.message });
+      let errorMessage = err.message;
+      if (errorMessage.includes('email-already-in-use')) {
+        errorMessage = 'This email is already registered. If you previously signed in with Google, please use the Google button instead, or try signing in.';
+      } else if (errorMessage.includes('operation-not-allowed')) {
+        errorMessage = 'Email/Password sign up is not enabled in Firebase Console.';
+      }
+      showToast({ type: 'error', title: 'Authentication failed', message: errorMessage });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      const { error } = await signInWithGoogle();
+      if (error) throw error;
+      showToast({ type: 'success', title: 'Signed in with Google' });
+    } catch (err: any) {
+      showToast({ type: 'error', title: 'Google Sign-in failed', message: err.message });
     } finally {
       setLoading(false);
     }
@@ -121,6 +143,29 @@ export default function Auth() {
             {mode === 'signin' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
           </button>
         </form>
+
+        {mode !== 'reset' && (
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[var(--border)]"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-[var(--surface)] text-[var(--text-muted)]">Or continue with</span>
+              </div>
+            </div>
+            <div className="mt-6">
+              <button
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[var(--border)] rounded-xl bg-white hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
+              >
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="h-5 w-5" alt="Google logo" />
+                Google
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="text-center text-sm text-[var(--text-secondary)] mt-6">
           {mode === 'signin' ? (

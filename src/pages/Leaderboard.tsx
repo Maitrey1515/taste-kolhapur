@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Trophy, TrendingUp, TrendingDown, Minus, Zap, Star } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import type { MPSScore } from '@/types';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { formatMPS, getMPSTier } from '@/lib/mps';
@@ -9,17 +10,28 @@ import clsx from 'clsx';
 
 export default function Leaderboard() {
   const [scores, setScores] = useState<MPSScore[]>([]);
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    supabase
-      .from('v_mps_scores')
-      .select('*')
-      .order('mps', { ascending: false })
-      .then(({ data, error }) => {
-        if (!error && data) {
-          setScores(data as MPSScore[]);
-        }
+    getDocs(collection(db, 'restaurants'))
+      .then((snap) => {
+        const mapped = snap.docs.map(doc => {
+          const r = doc.data();
+          return {
+            restaurant_id: doc.id,
+            restaurant_name: r.name,
+            area: r.area,
+            mps: r.mps_score || 0,
+            // Mock sub-scores for the UI if they don't exist in the document
+            r_score: r.r_score || (r.mps_score ? r.mps_score * 0.3 / 10 : 0.25),
+            cs_score: r.cs_score || (r.mps_score ? r.mps_score * 0.3 / 10 : 0.25),
+            v_score: r.v_score || (r.mps_score ? r.mps_score * 0.2 / 10 : 0.15),
+            rec_score: r.rec_score || (r.mps_score ? r.mps_score * 0.1 / 10 : 0.08),
+            rp_score: r.rp_score || (r.mps_score ? r.mps_score * 0.1 / 10 : 0.07),
+            review_count: r.review_count || 0,
+            overall_rating: r.taste_score || r.google_rating || 4,
+          } as MPSScore;
+        });
+        mapped.sort((a, b) => b.mps - a.mps);
+        setScores(mapped);
         setLoading(false);
       });
   }, []);

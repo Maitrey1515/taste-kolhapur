@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, Search } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, query, where, orderBy, getDocs, getDoc, doc } from 'firebase/firestore';
 import type { RestaurantEvent } from '@/types';
 import EventCard from '@/components/EventCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -12,26 +13,32 @@ export default function Events() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    let query = supabase
-      .from('restaurant_events')
-      .select('*, restaurant:restaurants(name, area, slug)')
-      .eq('is_active', true);
+    const fetchEvents = async () => {
+      setLoading(true);
+      let q = query(collection(db, 'restaurant_events'), where('is_active', '==', true));
 
-    const today = new Date().toISOString().split('T')[0];
-    if (filter === 'upcoming') {
-      query = query.gte('start_date', today).order('start_date', { ascending: true });
-    } else if (filter === 'past') {
-      query = query.lt('start_date', today).order('start_date', { ascending: false });
-    } else {
-      query = query.order('start_date', { ascending: false });
-    }
-
-    query.then(({ data, error }) => {
-      if (!error && data) {
-        setEvents(data as RestaurantEvent[]);
+      const today = new Date().toISOString().split('T')[0];
+      if (filter === 'upcoming') {
+        q = query(q, where('start_date', '>=', today), orderBy('start_date', 'asc'));
+      } else if (filter === 'past') {
+        q = query(q, where('start_date', '<', today), orderBy('start_date', 'desc'));
+      } else {
+        q = query(q, orderBy('start_date', 'desc'));
       }
+
+      const snap = await getDocs(q);
+      const data = await Promise.all(snap.docs.map(async d => {
+        const ev = { id: d.id, ...d.data() } as any;
+        if (ev.restaurant_id) {
+          const rDoc = await getDoc(doc(db, 'restaurants', ev.restaurant_id));
+          if (rDoc.exists()) ev.restaurant = { name: rDoc.data().name, area: rDoc.data().area, slug: rDoc.data().slug };
+        }
+        return ev;
+      }));
+      setEvents(data as RestaurantEvent[]);
       setLoading(false);
-    });
+    };
+    fetchEvents();
   }, [filter]);
 
   const filteredEvents = events.filter(e =>

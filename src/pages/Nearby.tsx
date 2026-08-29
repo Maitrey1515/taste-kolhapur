@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Navigation, Compass } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import type { Restaurant } from '@/types';
 import RestaurantCard from '@/components/RestaurantCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -34,16 +35,13 @@ export default function Nearby() {
   useEffect(() => {
     if (coords) {
       setLoading(true);
-      supabase
-        .from('restaurants')
-        .select('*')
-        .then(({ data, error }) => {
-          if (!error && data) {
-            const withDistances = attachDistances(data as Restaurant[], coords.lat, coords.lng)
-              .filter(r => r.distance_km !== undefined)
-              .sort((a, b) => (a.distance_km ?? 99) - (b.distance_km ?? 99));
-            setRestaurants(withDistances);
-          }
+      getDocs(collection(db, 'restaurants'))
+        .then((snap) => {
+          const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const withDistances = attachDistances(data as Restaurant[], coords.lat, coords.lng)
+            .filter(r => r.distance_km !== undefined)
+            .sort((a, b) => (a.distance_km ?? 99) - (b.distance_km ?? 99));
+          setRestaurants(withDistances);
           setLoading(false);
         });
     }

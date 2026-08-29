@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, query, where, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { BarChart3, Users, Settings, Database, Server, RefreshCw, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { showToast } from '@/components/Toast';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import clsx from 'clsx';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import BIDashboards from '@/components/BIDashboards';
 
 export default function AdminDashboard() {
   const { profile } = useAuth();
@@ -27,12 +29,26 @@ export default function AdminDashboard() {
   useEffect(() => {
     const loadData = async () => {
       // 1. Fetch claims
-      const { data: claimsData } = await supabase
-        .from('claims')
-        .select('*, restaurant:restaurants(name), user:profiles(display_name, email)')
-        .eq('status', 'pending');
+      const claimsRef = collection(db, 'claims');
+      const q = query(claimsRef, where('status', '==', 'pending'));
+      const querySnapshot = await getDocs(q);
+      
+      const claimsData = await Promise.all(querySnapshot.docs.map(async (claimDoc) => {
+        const claim = { id: claimDoc.id, ...claimDoc.data() } as any;
         
-      if (claimsData) setClaims(claimsData);
+        // Fetch relations manually since Firestore doesn't do SQL joins
+        if (claim.restaurant_id) {
+          const rDoc = await getDoc(doc(db, 'restaurants', claim.restaurant_id));
+          if (rDoc.exists()) claim.restaurant = { name: rDoc.data().name };
+        }
+        if (claim.user_id) {
+          const uDoc = await getDoc(doc(db, 'profiles', claim.user_id));
+          if (uDoc.exists()) claim.user = { display_name: uDoc.data().display_name, email: uDoc.data().email };
+        }
+        return claim;
+      }));
+        
+      setClaims(claimsData);
       
       // 2. Fetch mock counts (in a real app, use COUNT queries)
       setStats({
@@ -53,16 +69,16 @@ export default function AdminDashboard() {
     
     if (type === 'approve') {
       // 1. Update claim status
-      await supabase.from('claims').update({ status: 'approved' }).eq('id', id);
+      await updateDoc(doc(db, 'claims', id), { status: 'approved' });
       // 2. Update restaurant owner & claimed flag
-      await supabase.from('restaurants').update({ owner_id: user_id, claimed: true }).eq('id', rest_id);
+      await updateDoc(doc(db, 'restaurants', rest_id), { owner_id: user_id, claimed: true });
       // 3. Update user role
-      await supabase.from('profiles').update({ role: 'owner' }).eq('id', user_id);
+      await updateDoc(doc(db, 'profiles', user_id), { role: 'owner' });
       
       showToast({ type: 'success', title: 'Claim Approved', message: 'User is now the owner.' });
     } else {
       // Reject
-      await supabase.from('claims').update({ status: 'rejected' }).eq('id', id);
+      await updateDoc(doc(db, 'claims', id), { status: 'rejected' });
       showToast({ type: 'info', title: 'Claim Rejected' });
     }
     
@@ -129,40 +145,11 @@ export default function AdminDashboard() {
       <div className="flex-1 min-w-0">
         {loading ? <LoadingSpinner /> : (
           <>
-            {/* TAB: Platform Stats */}
+            {/* TAB: Platform Stats & BI */}
             {activeTab === 'platform' && (
               <div className="animate-fade-in space-y-6">
-                <h2 className="text-2xl font-display font-bold text-[var(--text-primary)] mb-4">Platform Overview</h2>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="card p-5 border-t-4 border-t-blue-500">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2"><Users className="w-4 h-4"/> Total Users</p>
-                    <p className="text-3xl font-display font-bold text-[var(--text-primary)] mt-2">{stats.users}</p>
-                  </div>
-                  <div className="card p-5 border-t-4 border-t-orange-500">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2"><Database className="w-4 h-4"/> Restaurants</p>
-                    <p className="text-3xl font-display font-bold text-[var(--text-primary)] mt-2">{stats.restaurants}</p>
-                  </div>
-                  <div className="card p-5 border-t-4 border-t-purple-500">
-                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2"><BarChart3 className="w-4 h-4"/> Reviews</p>
-                    <p className="text-3xl font-display font-bold text-[var(--text-primary)] mt-2">{stats.reviews}</p>
-                  </div>
-                </div>
-
-                <div className="card p-5">
-                  <h3 className="font-semibold mb-4">MPS Score Distribution</h3>
-                  <div className="h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={MOCK_HISTOGRAM}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                        <XAxis dataKey="range" stroke="var(--text-muted)" fontSize={12} />
-                        <YAxis stroke="var(--text-muted)" fontSize={12} />
-                        <RechartsTooltip cursor={{fill: 'var(--surface-secondary)'}} contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }} />
-                        <Bar dataKey="count" fill="#f97316" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+                <h2 className="text-2xl font-display font-bold text-[var(--text-primary)] mb-4">Platform Overview & BI</h2>
+                <BIDashboards />
               </div>
             )}
 

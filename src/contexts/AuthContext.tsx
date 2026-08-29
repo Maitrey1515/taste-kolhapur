@@ -1,15 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import type { Session, User } from '@supabase/supabase-js';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db, isFirebaseConfigured } from '@/lib/firebase';
 import type { Profile } from '@/types';
 
+// We map Firebase User to the expected structure if needed, but we can just expose Firebase User.
 interface AuthContextValue {
-  session: Session | null;
+  session: any | null; // For compatibility, though Firebase doesn't use 'session' the same way
   user: User | null;
   profile: Profile | null;
   loading: boolean;
   isConfigured: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signInWithGoogle: () => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, displayName: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
@@ -19,111 +22,143 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
+    if (!isFirebaseConfigured) {
       setLoading(false);
       return;
     }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
-      else setLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        await fetchProfile(firebaseUser.uid);
       } else {
         setProfile(null);
         setLoading(false);
       }
     });
 
-    return () => subscription.unsubscribe();
+    // Failsafe: force loading false after 5 seconds to prevent app lockup
+    const failsafe = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+
+    return () => {
+      unsubscribe();
+      clearTimeout(failsafe);
+    };
   }, []);
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      const docRef = doc(db, 'profiles', userId);
+      const docSnap = await getDoc(docRef);
 
-      if (error && error.code === 'PGRST116') {
-        // Profile doesn't exist — create it
-        await supabase.from('profiles').insert({
-          id: userId,
-          role: 'customer',
-        });
-        const { data: newProfile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', userId)
-          .single();
-        setProfile(newProfile);
+      if (docSnap.exists()) {
+        setProfile({ id: docSnap.id, ...docSnap.data() } as Profile);
       } else {
-        setProfile(data);
+        // Profile doesn't exist — create it
+        const newProfile = {
+          role: 'customer',
+          display_name: user?.displayName || 'User',
+        };
+        await setDoc(docRef, newProfile);
+        setProfile({ id: userId, ...newProfile } as Profile);
       }
     } catch (err) {
-      console.error('Error fetching profile:', err);
+      console.error('Error fetching profile (Check Firestore Rules!):', err);
+      // Fallback profile to prevent infinite loading if Firestore is blocked
+      setProfile({
+        id: userId,
+        role: 'customer',
+        display_name: 'User',
+      } as Profile);
     } finally {
       setLoading(false);
     }
   };
 
   const refreshProfile = async () => {
-    if (user) await fetchProfile(user.id);
+    if (user) await fetchProfile(user.uid);
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error as Error | null };
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      const docRef = doc(db, 'profiles', user.uid);
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) {
+        await setDoc(docRef, {
+          display_name: user.displayName || 'User',
+          role: 'customer',
+        });
+      }
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
   };
 
   const signUp = async (email: string, password: string, displayName: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { display_name: displayName } },
-    });
-    if (!error && data.user) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
       // Upsert profile with display name
-      await supabase.from('profiles').upsert({
-        id: data.user.id,
+      await setDoc(doc(db, 'profiles', user.uid), {
         display_name: displayName,
         role: 'customer',
       });
+      
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
     }
-    return { error: error as Error | null };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await firebaseSignOut(auth);
     setProfile(null);
   };
 
   const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth?tab=reset`,
-    });
-    return { error: error as Error | null };
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
   };
 
   return (
     <AuthContext.Provider value={{
-      session, user, profile, loading,
-      isConfigured: isSupabaseConfigured,
-      signIn, signUp, signOut, resetPassword, refreshProfile,
+      session: user ? { user } : null, // Mock session for backward compatibility
+      user, 
+      profile, 
+      loading,
+      isConfigured: isFirebaseConfigured,
+      signIn, 
+      signInWithGoogle,
+      signUp, 
+      signOut, 
+      resetPassword, 
+      refreshProfile,
     }}>
       {children}
     </AuthContext.Provider>

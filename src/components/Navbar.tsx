@@ -34,6 +34,7 @@ export default function Navbar() {
     { to: '/leaderboard', label: 'Leaderboard', icon: <Trophy className="w-4 h-4" /> },
     { to: '/nearby',      label: 'Nearby',       icon: <MapPin className="w-4 h-4" /> },
     { to: '/events',      label: 'Events',       icon: <Calendar className="w-4 h-4" /> },
+    { to: '/add-restaurant', label: 'For Owners', icon: <Store className="w-4 h-4" /> },
   ];
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');

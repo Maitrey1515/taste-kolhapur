@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  Search, Sparkles, Trophy, MapPin, Calendar,
-  ArrowRight, Star, TrendingUp, Zap, ChevronRight,
-} from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { Search, Sparkles, Trophy, MapPin, Calendar, ArrowRight, Star, TrendingUp, Zap, ChevronRight } from 'lucide-react';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, limit, getDocs, where, getDoc, doc } from 'firebase/firestore';
 import type { Restaurant, RestaurantEvent } from '@/types';
 import RestaurantCard from '@/components/RestaurantCard';
 import EventCard from '@/components/EventCard';
@@ -20,21 +18,26 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      supabase
-        .from('restaurants')
-        .select('*')
-        .order('taste_score', { ascending: false, nullsFirst: false })
-        .limit(6),
-      supabase
-        .from('restaurant_events')
-        .select('*, restaurant:restaurants(name, area, slug)')
-        .eq('is_active', true)
-        .gte('start_date', new Date().toISOString().split('T')[0])
-        .order('start_date', { ascending: true })
-        .limit(4),
-    ]).then(([restaurantsRes, eventsRes]) => {
-      setTopRestaurants((restaurantsRes.data ?? []) as Restaurant[]);
-      setEvents((eventsRes.data ?? []) as RestaurantEvent[]);
+      getDocs(query(collection(db, 'restaurants'), orderBy('taste_score', 'desc'), limit(6))),
+      getDocs(query(
+        collection(db, 'restaurant_events'), 
+        where('is_active', '==', true), 
+        where('start_date', '>=', new Date().toISOString().split('T')[0]), 
+        orderBy('start_date', 'asc'), 
+        limit(4)
+      ))
+    ]).then(async ([restaurantsSnap, eventsSnap]) => {
+      setTopRestaurants(restaurantsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as Restaurant[]);
+      
+      const evsData = await Promise.all(eventsSnap.docs.map(async (d) => {
+        const ev = { id: d.id, ...d.data() } as any;
+        if (ev.restaurant_id) {
+          const rDoc = await getDoc(doc(db, 'restaurants', ev.restaurant_id));
+          if (rDoc.exists()) ev.restaurant = { name: rDoc.data().name, area: rDoc.data().area, slug: rDoc.data().slug };
+        }
+        return ev;
+      }));
+      setEvents(evsData as RestaurantEvent[]);
       setLoading(false);
     });
   }, []);
@@ -249,14 +252,14 @@ export default function Home() {
             Own a Misal Restaurant?
           </h2>
           <p className="text-[var(--text-muted)] mb-8 max-w-xl mx-auto">
-            Claim your restaurant listing, respond to reviews, post events, and get access to powerful analytics.
+            Register your restaurant to respond to reviews, post events, and get access to powerful analytics.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <Link to="/discover" className="btn btn-primary btn-lg">
-              <MapPin className="w-4 h-4" /> Find Your Restaurant
+            <Link to="/discover" className="btn btn-secondary btn-lg">
+              <MapPin className="w-4 h-4" /> Find Misal Places
             </Link>
-            <Link to="/auth?tab=signup" className="btn btn-outline btn-lg">
-              <ArrowRight className="w-4 h-4" /> Get Started Free
+            <Link to="/add-restaurant" className="btn btn-primary btn-lg">
+              <ArrowRight className="w-4 h-4" /> Register Restaurant
             </Link>
           </div>
         </div>

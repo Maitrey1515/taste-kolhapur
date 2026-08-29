@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { db, auth } from '@/lib/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function VerifyVisit() {
@@ -14,17 +15,16 @@ export default function VerifyVisit() {
     // instead of the in-app scanner. We'll verify they are logged in, then 
     // redirect them to the restaurant page to write a review with verified_visit=true.
     const check = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      // Firebase auth state might take a moment to initialize on direct load, 
+      // but for simplicity in this MVP we check auth.currentUser
+      const user = auth.currentUser;
       
-      const { data: rest } = await supabase
-        .from('restaurants')
-        .select('name')
-        .eq('slug', slug)
-        .single();
+      const q = query(collection(db, 'restaurants'), where('slug', '==', slug));
+      const snap = await getDocs(q);
         
-      if (rest) setRestaurantName(rest.name);
+      if (!snap.empty) setRestaurantName(snap.docs[0].data().name);
 
-      if (!session) {
+      if (!user) {
         setStatus('error');
         return;
       }

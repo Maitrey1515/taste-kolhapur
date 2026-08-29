@@ -65,28 +65,17 @@ export async function generateDisplayToken(slug: string): Promise<string> {
 
 // ─── Validate scanned QR (calls Supabase Edge Function) ──────────────────
 export async function validateVisitToken(
-  slug: string,
-  supabaseUrl: string,
-  supabaseAnonKey: string,
+  slug: string
 ): Promise<{ valid: boolean; error?: string }> {
   try {
-    const response = await fetch(
-      `${supabaseUrl}/functions/v1/validate-visit-token`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-        },
-        body: JSON.stringify({ slug }),
-      }
-    );
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      return { valid: false, error: err.error || 'Validation failed' };
+    const { db } = await import('@/lib/firebase');
+    const { collection, query, where, getDocs } = await import('firebase/firestore');
+    const q = query(collection(db, 'restaurants'), where('slug', '==', slug));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      return { valid: true };
     }
-    const data = await response.json();
-    return { valid: data.valid === true };
+    return { valid: false, error: 'Restaurant not found' };
   } catch (err) {
     console.error('QR validation error:', err);
     return { valid: false, error: 'Network error during validation' };

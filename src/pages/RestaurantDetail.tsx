@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import {
-  MapPin, Phone, Globe, Clock, Users, Car, Leaf, Truck, Wifi,
-  Star, CheckCircle, ArrowLeft, Share2, Heart, Shield, Loader2,
-  Camera, ThumbsUp, ThumbsDown, Smile, Frown, Award,
-  UtensilsCrossed, X,
-} from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { MapPin, Phone, Globe, Clock, Users, Car, Leaf, Truck, Wifi, Star, CheckCircle, ArrowLeft, Share2, Heart, Shield, Loader2, Camera, ThumbsUp, ThumbsDown, Smile, Frown, Award, UtensilsCrossed, X } from 'lucide-react';
+import { APIProvider, Map as GoogleMap, AdvancedMarker } from '@vis.gl/react-google-maps';
+import { db } from '@/lib/firebase';
+import { collection, query, where, getDocs, limit, orderBy, addDoc, doc, updateDoc, getDoc, increment } from 'firebase/firestore';
 import type { Restaurant, Review, ReviewSubRatings } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import StarRating from '@/components/StarRating';
@@ -62,29 +59,39 @@ export default function RestaurantDetail() {
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
-    supabase
-      .from('restaurants')
-      .select('*')
-      .eq('slug', slug)
-      .single()
-      .then(({ data, error }) => {
-        if (error || !data) { navigate('/discover'); return; }
-        setRestaurant(data as Restaurant);
-        setLoading(false);
-        loadReviews(data.id);
-      });
+    const q = query(collection(db, 'restaurants'), where('slug', '==', slug), limit(1));
+    getDocs(q).then((snap) => {
+      if (snap.empty) { navigate('/discover'); return; }
+      const data = { id: snap.docs[0].id, ...snap.docs[0].data() };
+      setRestaurant(data as Restaurant);
+      setLoading(false);
+      loadReviews(data.id);
+    });
   }, [slug]);
 
   const loadReviews = async (restaurantId: string) => {
     setReviewsLoading(true);
-    const { data } = await supabase
-      .from('reviews')
-      .select('*, reviewer:profiles(id,display_name,avatar), replies:review_replies(*, owner:profiles(display_name,avatar))')
-      .eq('restaurant_id', restaurantId)
-      .eq('is_spam', false)
-      .order('created_at', { ascending: false })
-      .limit(50);
-    setReviews((data ?? []) as Review[]);
+    const q = query(collection(db, 'reviews'), where('restaurant_id', '==', restaurantId), where('is_spam', '==', false), orderBy('created_at', 'desc'), limit(50));
+    const snap = await getDocs(q);
+    const reviewsData = await Promise.all(snap.docs.map(async (d) => {
+      const review = { id: d.id, ...d.data() } as any;
+      if (review.user_id) {
+        const uDoc = await getDoc(doc(db, 'profiles', review.user_id));
+        if (uDoc.exists()) review.reviewer = { id: uDoc.id, ...uDoc.data() };
+      }
+      const repliesQ = query(collection(db, 'review_replies'), where('review_id', '==', d.id));
+      const repliesSnap = await getDocs(repliesQ);
+      review.replies = await Promise.all(repliesSnap.docs.map(async rd => {
+        const reply = { id: rd.id, ...rd.data() } as any;
+        if (reply.owner_id) {
+          const oDoc = await getDoc(doc(db, 'profiles', reply.owner_id));
+          if (oDoc.exists()) reply.owner = oDoc.data();
+        }
+        return reply;
+      }));
+      return review;
+    }));
+    setReviews(reviewsData as Review[]);
     setReviewsLoading(false);
   };
 
@@ -116,34 +123,35 @@ export default function RestaurantDetail() {
       reviewText, overallRating, previousReviews: reviews.filter(r => r.user_id === user.id)
     });
 
-    const { error } = await supabase.from('reviews').insert({
-      restaurant_id: restaurant.id,
-      user_id: user.id,
-      sub_ratings: subRatings,
-      overall_rating: overallRating,
-      would_recommend: wouldRecommend,
-      would_visit_again: wouldVisitAgain,
-      written_review: reviewText.trim(),
-      favourite_dish: favouriteDish.trim() || null,
-      amount_spent: amountSpent ? parseInt(amountSpent) : null,
-      visit_date: new Date().toISOString().split('T')[0],
-      tags,
-      media: [],
-      verified_visit: verifiedVisit,
-      is_spam: false,
-      is_fake: fakeScore >= 0.7,
-      fake_score: fakeScore,
-      helpful_count: 0,
-    });
-
-    setSubmitting(false);
-    if (error) {
-      showToast({ type: 'error', title: 'Error', message: error.message });
-    } else {
+    try {
+      await addDoc(collection(db, 'reviews'), {
+        restaurant_id: restaurant.id,
+        user_id: user.uid,
+        sub_ratings: subRatings,
+        overall_rating: overallRating,
+        would_recommend: wouldRecommend,
+        would_visit_again: wouldVisitAgain,
+        written_review: reviewText.trim(),
+        favourite_dish: favouriteDish.trim() || null,
+        amount_spent: amountSpent ? parseInt(amountSpent) : null,
+        visit_date: new Date().toISOString().split('T')[0],
+        tags,
+        media: [],
+        verified_visit: verifiedVisit,
+        is_spam: false,
+        is_fake: fakeScore >= 0.7,
+        fake_score: fakeScore,
+        helpful_count: 0,
+        created_at: new Date().toISOString()
+      });
+      setSubmitting(false);
       showToast({ type: 'success', title: 'Review submitted!', message: 'Thank you for your feedback.' });
       setReviewModalOpen(false);
       resetForm();
       loadReviews(restaurant.id);
+    } catch(error: any) {
+      setSubmitting(false);
+      showToast({ type: 'error', title: 'Error', message: error.message });
     }
   };
 
@@ -154,18 +162,20 @@ export default function RestaurantDetail() {
   };
 
   const handleHelpful = async (reviewId: string) => {
-    await supabase.rpc('increment_helpful', { review_id: reviewId });
+    await updateDoc(doc(db, 'reviews', reviewId), { helpful_count: increment(1) });
     setReviews(rs => rs.map(r => r.id === reviewId ? { ...r, helpful_count: r.helpful_count + 1 } : r));
   };
 
   const handleOwnerReply = async (reviewId: string, content: string) => {
     if (!user) return;
-    const { error } = await supabase.from('review_replies').insert({
-      review_id: reviewId, owner_id: user.id, content,
-    });
-    if (!error) {
+    try {
+      await addDoc(collection(db, 'review_replies'), {
+        review_id: reviewId, owner_id: user.uid, content, created_at: new Date().toISOString()
+      });
       showToast({ type: 'success', title: 'Reply posted' });
       loadReviews(restaurant!.id);
+    } catch(err) {
+      showToast({ type: 'error', title: 'Error posting reply' });
     }
   };
 
@@ -433,14 +443,40 @@ export default function RestaurantDetail() {
             </div>
           )}
 
-          {/* Claim button */}
-          {!restaurant.claimed && user && profile?.role === 'customer' && (
-            <Link
-              to={`/claim/${restaurant.id}`}
-              className="btn btn-outline w-full"
-            >
-              <Shield className="w-4 h-4" /> Claim this Restaurant
-            </Link>
+
+
+          {/* Map */}
+          {restaurant.lat && restaurant.lng && (
+            <div className="card p-4 overflow-hidden">
+              <h3 className="font-display font-semibold text-[var(--text-primary)] mb-3">Location</h3>
+              <div className="h-48 rounded-xl overflow-hidden bg-[var(--surface-secondary)] border border-[var(--border)]">
+                {import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? (
+                  <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+                    <GoogleMap 
+                      defaultCenter={{ lat: restaurant.lat, lng: restaurant.lng }} 
+                      defaultZoom={15}
+                      mapId="DEMO_MAP_ID"
+                      disableDefaultUI
+                    >
+                      <AdvancedMarker position={{ lat: restaurant.lat, lng: restaurant.lng }} />
+                    </GoogleMap>
+                  </APIProvider>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-sm text-[var(--text-muted)] text-center p-4">
+                    <p>Map unavailable.<br/>Configure VITE_GOOGLE_MAPS_API_KEY in .env</p>
+                  </div>
+                )}
+              </div>
+              {restaurant.google_place_id && (
+                <a 
+                  href={`https://www.google.com/maps/place/?q=place_id:${restaurant.google_place_id}`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="btn btn-secondary w-full mt-3 text-sm"
+                >
+                  Get Directions
+                </a>
+              )}
+            </div>
           )}
 
           {/* UPI */}

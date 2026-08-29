@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, X, Sparkles } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import type { Restaurant, DiscoveryFilters } from '@/types';
 import RestaurantCard from '@/components/RestaurantCard';
 import FilterSidebar from '@/components/FilterSidebar';
@@ -31,50 +32,52 @@ export default function Discover() {
   const fetchRestaurants = useCallback(async (f: DiscoveryFilters, pageNum: number) => {
     setLoading(true);
     try {
-      let query = supabase
-        .from('restaurants')
-        .select('*', { count: 'exact' });
+      const snap = await getDocs(collection(db, 'restaurants'));
+      let data = snap.docs.map(d => ({ id: d.id, ...d.data() } as Restaurant));
 
-      // Search
+      // Filter in memory
       if (f.search) {
-        query = query.or(`name.ilike.%${f.search}%,area.ilike.%${f.search}%,address.ilike.%${f.search}%`);
+        const q = f.search.toLowerCase();
+        data = data.filter(r => 
+          r.name?.toLowerCase().includes(q) || 
+          r.area?.toLowerCase().includes(q) || 
+          r.address?.toLowerCase().includes(q)
+        );
       }
-      // Area
-      if (f.area) query = query.ilike('area', `%${f.area}%`);
-      // Price
-      if (f.price_level) query = query.eq('price_level', f.price_level);
-      // Rating
-      if (f.min_rating) query = query.gte('taste_score', f.min_rating);
-      // Features (boolean filters via JSON containment)
-      if (f.parking)         query = query.eq('features->>parking',         'true');
-      if (f.family_friendly) query = query.eq('features->>family_friendly', 'true');
-      if (f.ac)              query = query.eq('features->>ac',              'true');
-      if (f.takeaway)        query = query.eq('features->>takeaway',        'true');
-      if (f.delivery)        query = query.eq('features->>delivery',        'true');
-      if (f.wheelchair)      query = query.eq('features->>wheelchair',      'true');
-      if (f.veg)             query = query.eq('features->>veg',             'true');
+      if (f.area) data = data.filter(r => r.area?.toLowerCase().includes(f.area.toLowerCase()));
+      if (f.price_level) data = data.filter(r => r.price_level === f.price_level);
+      if (f.min_rating) data = data.filter(r => (r.taste_score || 0) >= f.min_rating!);
+      
+      if (f.parking) data = data.filter(r => r.features?.parking);
+      if (f.family_friendly) data = data.filter(r => r.features?.family_friendly);
+      if (f.ac) data = data.filter(r => r.features?.ac);
+      if (f.takeaway) data = data.filter(r => r.features?.takeaway);
+      if (f.delivery) data = data.filter(r => r.features?.delivery);
+      if (f.wheelchair) data = data.filter(r => r.features?.wheelchair);
+      if (f.veg) data = data.filter(r => r.features?.veg);
 
       // Sort
       switch (f.sort) {
-        case 'rating':     query = query.order('taste_score',    { ascending: false, nullsFirst: false }); break;
-        case 'price_asc':  query = query.order('avg_cost',       { ascending: true,  nullsFirst: false }); break;
-        case 'price_desc': query = query.order('avg_cost',       { ascending: false, nullsFirst: false }); break;
-        case 'reviews':    query = query.order('review_count',   { ascending: false }); break;
-        case 'newest':     query = query.order('created_at',     { ascending: false }); break;
-        default:           query = query.order('taste_score',    { ascending: false, nullsFirst: false }); break;
+        case 'rating':     data.sort((a,b) => (b.taste_score || 0) - (a.taste_score || 0)); break;
+        case 'price_asc':  data.sort((a,b) => (a.avg_cost || 0) - (b.avg_cost || 0)); break;
+        case 'price_desc': data.sort((a,b) => (b.avg_cost || 0) - (a.avg_cost || 0)); break;
+        case 'reviews':    data.sort((a,b) => (b.review_count || 0) - (a.review_count || 0)); break;
+        case 'newest':     data.sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); break;
+        default:           data.sort((a,b) => (b.taste_score || 0) - (a.taste_score || 0)); break;
       }
 
-      query = query.range(pageNum * PAGE_SIZE, (pageNum + 1) * PAGE_SIZE - 1);
+      setTotal(data.length);
 
-      const { data, count, error } = await query;
-      if (error) throw error;
+      // Pagination
+      const paged = data.slice(pageNum * PAGE_SIZE, (pageNum + 1) * PAGE_SIZE);
 
       if (pageNum === 0) {
-        setRestaurants((data ?? []) as Restaurant[]);
+        setRestaurants(paged);
       } else {
-        setRestaurants(prev => [...prev, ...(data ?? []) as Restaurant[]]);
+        setRestaurants(prev => [...prev, ...paged]);
       }
-      setTotal(count ?? 0);
+    } catch(err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }

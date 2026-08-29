@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, query, where, getDocs, doc, updateDoc, getDoc, orderBy } from 'firebase/firestore';
 import type { Review, Restaurant } from '@/types';
 import { buildTasteProfileFromReviews, buildRecommendationLists } from '@/lib/recommendations';
 import ReviewCard from '@/components/ReviewCard';
@@ -32,52 +33,86 @@ export default function CustomerDashboard() {
     setAvatar(profile.avatar ?? '');
 
     const loadData = async () => {
-      // 1. Fetch user's reviews
-      const { data: revs } = await supabase
-        .from('reviews')
-        .select('*, restaurant:restaurants(*), replies:review_replies(*, owner:profiles(display_name,avatar))')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      try {
+        // 1. Fetch user's reviews (removed orderBy to avoid composite index requirement)
+        const q = query(collection(db, 'reviews'), where('user_id', '==', user.uid));
+        const snap = await getDocs(q);
         
-      const userReviews = (revs ?? []) as Review[];
-      setReviews(userReviews);
+        let userReviews = await Promise.all(snap.docs.map(async (d) => {
+          const review = { id: d.id, ...d.data() } as any;
+          
+          // Fetch restaurant
+          if (review.restaurant_id) {
+            const rDoc = await getDoc(doc(db, 'restaurants', review.restaurant_id));
+            if (rDoc.exists()) review.restaurant = { id: rDoc.id, ...rDoc.data() };
+          }
+          
+          // Fetch replies
+          const repliesQ = query(collection(db, 'review_replies'), where('review_id', '==', d.id));
+          const repliesSnap = await getDocs(repliesQ);
+          review.replies = await Promise.all(repliesSnap.docs.map(async rd => {
+            const reply = { id: rd.id, ...rd.data() } as any;
+            if (reply.owner_id) {
+              const oDoc = await getDoc(doc(db, 'profiles', reply.owner_id));
+              if (oDoc.exists()) reply.owner = oDoc.data();
+            }
+            return reply;
+          }));
+          
+          return review;
+        }));
 
-      // 2. Compute taste profile & update if needed
-      const tasteProfile = buildTasteProfileFromReviews(userReviews);
-      await supabase.from('profiles').update({ taste_profile: tasteProfile }).eq('id', user.id);
+        // Sort in memory
+        userReviews.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        setReviews(userReviews as Review[]);
 
-      // 3. Fetch all restaurants for recommendations
-      const { data: allRests } = await supabase.from('restaurants').select('*');
-      
-      // 4. Build recommendations
-      if (allRests) {
-        const lists = buildRecommendationLists(allRests as Restaurant[], tasteProfile);
-        setRecommendations(lists);
+        // 2. Compute taste profile & update if needed
+        const tasteProfile = buildTasteProfileFromReviews(userReviews as Review[]);
+        await updateDoc(doc(db, 'profiles', user.uid), { taste_profile: tasteProfile });
+
+        // 3. Fetch all restaurants for recommendations
+        const restsSnap = await getDocs(collection(db, 'restaurants'));
+        const allRests = restsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        // 4. Build recommendations
+        if (allRests.length) {
+          const lists = buildRecommendationLists(allRests as Restaurant[], tasteProfile);
+          setRecommendations(lists);
+        }
+      } catch (err) {
+        console.error("Error loading dashboard data:", err);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
 
     loadData();
+
+    // Failsafe: if data doesn't load within 5 seconds, force render
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+    
+    return () => clearTimeout(timeout);
   }, [user, profile]);
 
   const handleSaveProfile = async () => {
     if (!user) return;
     setSaving(true);
-    const { error } = await supabase.from('profiles').update({
-      display_name: displayName,
-      city,
-      bio,
-      avatar,
-    }).eq('id', user.id);
-    
-    setSaving(false);
-    if (error) {
-      showToast({ type: 'error', title: 'Update failed', message: error.message });
-    } else {
+    try {
+      await updateDoc(doc(db, 'profiles', user.uid), {
+        display_name: displayName,
+        city,
+        bio,
+        avatar,
+      });
       showToast({ type: 'success', title: 'Profile updated' });
       setEditing(false);
       refreshProfile();
+    } catch (error: any) {
+      showToast({ type: 'error', title: 'Update failed', message: error.message });
+    } finally {
+      setSaving(false);
     }
   };
 

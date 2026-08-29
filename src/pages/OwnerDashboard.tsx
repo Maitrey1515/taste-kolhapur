@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, query, where, getDocs, doc, updateDoc, addDoc, deleteDoc, orderBy } from 'firebase/firestore';
 import type { Restaurant, Review, RestaurantEvent } from '@/types';
 import { 
   Building, QrCode, Calendar, MessageSquare, Edit3, Settings, 
-  BarChart2, TrendingUp, Users, Star, Plus, Trash2, Shield 
+  BarChart2, TrendingUp, Users, Star, Plus, Trash2, Shield, Loader2 
 } from 'lucide-react';
 import { showToast } from '@/components/Toast';
 import QRDisplay from '@/components/QRDisplay';
@@ -38,43 +39,65 @@ export default function OwnerDashboard() {
   useEffect(() => {
     if (!user) return;
     
+    let isMounted = true;
+    
+    // Failsafe timer in case Firebase hangs
+    const fallbackTimer = setTimeout(() => {
+      if (isMounted) setLoading(false);
+    }, 5000);
+    
     // Fetch the restaurant owned by this user
-    supabase
-      .from('restaurants')
-      .select('*')
-      .eq('owner_id', user.id)
-      .single()
-      .then(async ({ data }) => {
-        if (data) {
-          setRestaurant(data as Restaurant);
-          setEditForm(data);
-          
-          // Fetch events
-          const { data: evs } = await supabase.from('restaurant_events').select('*').eq('restaurant_id', data.id).order('start_date', { ascending: false });
+    const q = query(collection(db, 'restaurants'), where('owner_id', '==', user.uid));
+    getDocs(q).then(async (snap) => {
+      if (!isMounted) return;
+      
+      if (!snap.empty) {
+        const data = { id: snap.docs[0].id, ...snap.docs[0].data() } as Restaurant;
+        setRestaurant(data);
+        setEditForm(data);
+        
+        // Fetch events
+        try {
+          const eventsQ = query(collection(db, 'restaurant_events'), where('restaurant_id', '==', data.id), orderBy('start_date', 'desc'));
+          const eventsSnap = await getDocs(eventsQ);
+          const evs = eventsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
           if (evs) setEvents(evs as RestaurantEvent[]);
-          
-          // Generate mock chart data for the BI dashboard
-          setChartData([
-            { name: 'Jan', rating: 4.0 }, { name: 'Feb', rating: 4.1 },
-            { name: 'Mar', rating: 4.3 }, { name: 'Apr', rating: 4.2 },
-            { name: 'May', rating: 4.5 }, { name: 'Jun', rating: 4.4 },
-          ]);
+        } catch (e) {
+          console.error("Failed to fetch events", e);
         }
-        setLoading(false);
-      });
+        
+        // Generate mock chart data for the BI dashboard
+        setChartData([
+          { name: 'Jan', rating: 4.0 }, { name: 'Feb', rating: 4.1 },
+          { name: 'Mar', rating: 4.3 }, { name: 'Apr', rating: 4.2 },
+          { name: 'May', rating: 4.5 }, { name: 'Jun', rating: 4.4 },
+        ]);
+      }
+      clearTimeout(fallbackTimer);
+      setLoading(false);
+    }).catch(err => {
+      console.error("Failed to fetch restaurant", err);
+      clearTimeout(fallbackTimer);
+      if (isMounted) setLoading(false);
+    });
+    
+    return () => {
+      isMounted = false;
+      clearTimeout(fallbackTimer);
+    };
   }, [user]);
 
   const handleSaveDetails = async () => {
     if (!restaurant) return;
     setSaving(true);
-    const { error } = await supabase.from('restaurants').update(editForm).eq('id', restaurant.id);
-    setSaving(false);
-    
-    if (error) {
-      showToast({ type: 'error', title: 'Update Failed', message: error.message });
-    } else {
+    try {
+      await updateDoc(doc(db, 'restaurants', restaurant.id), editForm as any);
+      setSaving(false);
       showToast({ type: 'success', title: 'Details updated' });
       setRestaurant({ ...restaurant, ...editForm } as Restaurant);
+    } catch (error: any) {
+      setSaving(false);
+      showToast({ type: 'error', title: 'Update Failed', message: error.message });
     }
   };
 
@@ -82,28 +105,29 @@ export default function OwnerDashboard() {
     e.preventDefault();
     if (!restaurant) return;
     
-    const { data, error } = await supabase.from('restaurant_events').insert({
-      restaurant_id: restaurant.id,
-      ...newEvent,
-      is_active: true
-    }).select().single();
-    
-    if (error) {
-      showToast({ type: 'error', title: 'Failed to create event', message: error.message });
-    } else if (data) {
+    try {
+      const docRef = await addDoc(collection(db, 'restaurant_events'), {
+        restaurant_id: restaurant.id,
+        ...newEvent,
+        is_active: true
+      });
       showToast({ type: 'success', title: 'Event created' });
-      setEvents([data as RestaurantEvent, ...events]);
+      setEvents([{ id: docRef.id, restaurant_id: restaurant.id, ...newEvent, is_active: true } as unknown as RestaurantEvent, ...events]);
       setEventFormOpen(false);
       setNewEvent({ title: '', type: 'special_menu', description: '', start_date: '', end_date: '' });
+    } catch (error: any) {
+      showToast({ type: 'error', title: 'Failed to create event', message: error.message });
     }
   };
 
   const handleDeleteEvent = async () => {
     if (!confirmDelete) return;
-    const { error } = await supabase.from('restaurant_events').delete().eq('id', confirmDelete);
-    if (!error) {
+    try {
+      await deleteDoc(doc(db, 'restaurant_events', confirmDelete));
       setEvents(events.filter(e => e.id !== confirmDelete));
       showToast({ type: 'success', title: 'Event deleted' });
+    } catch (error) {
+      // ignore
     }
     setConfirmDelete(null);
   };

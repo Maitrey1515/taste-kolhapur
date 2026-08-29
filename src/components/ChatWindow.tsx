@@ -3,7 +3,8 @@ import { MessageCircle, X, Send, ChevronDown, Bot } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { ChatMessage, Restaurant } from '@/types';
 import { detectIntent, generateBotResponse, createMessage } from '@/lib/chatbot';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import RestaurantCard from './RestaurantCard';
 import clsx from 'clsx';
 
@@ -41,13 +42,9 @@ export default function ChatWindow() {
 
   // Load restaurants once
   useEffect(() => {
-    supabase
-      .from('restaurants')
-      .select('*')
-      .order('taste_score', { ascending: false })
-      .limit(50)
-      .then(({ data }) => {
-        if (data) setRestaurants(data as Restaurant[]);
+    getDocs(query(collection(db, 'restaurants'), orderBy('taste_score', 'desc'), limit(50)))
+      .then((snap) => {
+        setRestaurants(snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Restaurant)));
       });
   }, []);
 

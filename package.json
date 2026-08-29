@@ -11,9 +11,10 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
-    "@supabase/supabase-js": "^2.43.1",
+    "@vis.gl/react-google-maps": "^1.9.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "firebase": "^12.18.0",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.378.0",
     "qrcode": "^1.5.4",

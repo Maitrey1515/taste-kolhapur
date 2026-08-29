@@ -1,0 +1,790 @@
+[
+  {
+    "hotel_id": "H001",
+    "name": "Bawada Misal",
+    "area": "Kasaba",
+    "established_year": 1923,
+    "opening_time": "08:30:00",
+    "closing_time": "17:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": 70,
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–200",
+    "source_dataset": {
+      "google_rating": 4.8,
+      "google_reviews": 32686
+    },
+    "menu": {
+      "regular_misal_price": "₹90–100",
+      "special_misal_price": "₹130–150",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "25",
+      "solkadhi_price": "40",
+      "other_items": "Bread, Shev"
+    },
+    "customer_survey": {
+      "sample_size": 5,
+      "avg_taste": 4.6,
+      "avg_service": 4.0,
+      "avg_cleanliness": 5.0,
+      "avg_value_for_money": 4.2,
+      "recommend_pct": 100.0
+    },
+    "operations": {
+      "peak_hours": "9–11 AM",
+      "approx_customers_per_day": "500",
+      "best_selling_dish": "Special Misal",
+      "marketing_channels": "Google, Instagram, Word of Mouth",
+      "biggest_challenge": "Parking during peak hours",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJv19JIfMAwTsR8faovWjbTh0",
+      "verified_address": "1169, E Ward, Main Rd, Kawade Galli, Maratha Colony, Kasaba Bawada, Kolhapur, Maharashtra 416006, India",
+      "lat": 16.7313337,
+      "lng": 74.2424943,
+      "phone": "+91 88303 85571",
+      "live_rating": 4.8,
+      "live_review_count": 34276,
+      "maps_url": "https://maps.google.com/?cid=2111866518188390129",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": "https://bawadamisal.com/",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjDF9l79jmtevmSXLjd3Zi5_UeHIwEmZlflulknfix01ES-2SdkuOfe9YDQJOWXH8Prtulhz7wZvJN7MI5SqmE2X1hQAhkhEUO2JNHCSmN1xHcPRRCJi_7b_AbOpTrA12iPzps4gW-HMP4lf=s4800-w800-h600",
+          "credit": "Rushikesh Pol"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjD__5rg83ESIRTLVesr7k0K5-X7CRjiNpTsTntkhaXu_9L2rg0_UCuoCTa9c8QWM0DSAJzv7Ln8DjftUQTUzdr-MJIIigH_4aTWWwHOM_XiYmEKg4rloHdR8TnjhRkSvrkstlASQcP3BHdHrA=s4800-w800-h600",
+          "credit": "Omkar Patel"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H002",
+    "name": "Phadtare Misal Center",
+    "area": "Shivaji Udyam Nagar",
+    "established_year": 1980,
+    "opening_time": "09:00:00",
+    "closing_time": "14:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": "40-50",
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "no",
+    "approx_price": "₹1–200",
+    "source_dataset": {
+      "google_rating": 3.8,
+      "google_reviews": 7330
+    },
+    "menu": {
+      "regular_misal_price": "₹80–100",
+      "special_misal_price": "₹120–140",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "25",
+      "solkadhi_price": "40",
+      "other_items": "Dahi Misal"
+    },
+    "customer_survey": {
+      "sample_size": 5,
+      "avg_taste": 4.6,
+      "avg_service": 4.0,
+      "avg_cleanliness": 5.0,
+      "avg_value_for_money": 4.4,
+      "recommend_pct": 100.0
+    },
+    "operations": {
+      "peak_hours": "   8–10 AM",
+      "approx_customers_per_day": "350",
+      "best_selling_dish": "Regular misal",
+      "marketing_channels": "Word of Mouth",
+      "biggest_challenge": "Staff shortage",
+      "peak_working_days": "Saturday, Sunday ,Public Holidays"
+    },
+    "google_places": {
+      "place_id": "ChIJ8xrTzxMAwTsRRbLE2j_mcX0",
+      "verified_address": "M6WM+247, 1243, near Laxmi Ice Factory, E Ward, Shivaji Udyam Nagar, Kolhapur, Maharashtra 416008, India",
+      "lat": 16.6943785,
+      "lng": 74.2332156,
+      "phone": "+91 98225 58991",
+      "live_rating": 3.8,
+      "live_review_count": 7337,
+      "maps_url": "https://maps.google.com/?cid=9039259089036948037",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjAaQjbLeIiUwD2lR_JxPgjLHKnvLGn2vOWRkQsGZTwlFDGpuYZdfkSdM_i9Te1rqx3yG9DuFCUYaop_axM7kbWE-dgKndEcAeXsTgfoI5EYoF0uCKXHe_LyOggmx9Ev5WDL-Hz5rRgPbpdLbg=s4800-w800-h600",
+          "credit": "Phadtare Misal Center"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjDjUDEAC41eTBZveOiUB8oUq48KdOeCDijEZKzB_2Y3gKS6Yn60Kb6XxOL31zXC4hN8ZlKxUw8HB1mKHHDvlvLxqEp96BDq8LroMhiSLnPC9WWPDo9V1MnFd8GKEUCUqcp52IY7e29MkYwuBx0=s4800-w800-h600",
+          "credit": "Jay Singh Baghel"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H003",
+    "name": "Laxmi Misal",
+    "area": "Shivaji Udyam Nagar",
+    "established_year": 1988,
+    "opening_time": "08:00:00",
+    "closing_time": "16:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": "40-50",
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "no",
+    "approx_price": "₹1–200",
+    "source_dataset": {
+      "google_rating": 4.3,
+      "google_reviews": 2967
+    },
+    "menu": {
+      "regular_misal_price": "₹80–100",
+      "special_misal_price": "₹120–140",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "25",
+      "solkadhi_price": "40",
+      "other_items": "Bread"
+    },
+    "customer_survey": {
+      "sample_size": 3,
+      "avg_taste": 4.67,
+      "avg_service": 4.0,
+      "avg_cleanliness": 5.0,
+      "avg_value_for_money": 4.33,
+      "recommend_pct": 100.0
+    },
+    "operations": {
+      "peak_hours": "9:00–11:30 AM",
+      "approx_customers_per_day": "300",
+      "best_selling_dish": "Special Misal",
+      "marketing_channels": "Instagram, Google",
+      "biggest_challenge": "Competition",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJX1VroRMAwTsRCFsfvbLTkBU",
+      "verified_address": "M G Karajgar Road, Shivaji Udyam Nagar, behind Big Bazaar, Kolhapur, Maharashtra 416008, India",
+      "lat": 16.6963292,
+      "lng": 74.2338316,
+      "phone": "+91 90494 20515",
+      "live_rating": 4.3,
+      "live_review_count": 2979,
+      "maps_url": "https://maps.google.com/?cid=1553974636073409288",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjBr7EZshoY9KGWK-dgvz46ANV6p0Q7zwk51IePYn3VjDUk2WlHrFntkrsdYh7RPOEycBmQTU0EwqRAVR_oDhLtYVqIMuMdQlMx-ZngyAsv5mSkXDALXudzD5PoJTRNvqeYukmnuqks5dmydNg=s4800-w800-h600",
+          "credit": "Laxmi Misal"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjCdLPUKXdlkpB7oepcVFPVlYUOSpUQY0GN9x4WpS7_GZ-Ph-LB_MGekEEVgX_755TjAXcI1s22jpYGyhApQlgqh7LjDAQzeZbiCkFGIbh34HJytUw8iGTzZqkrcZ6Y5IBQeIZ0SupE1mUHkuJ4=s4800-w800-h600",
+          "credit": "Laxmi Misal"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H004",
+    "name": "Gavran Misal",
+    "area": "Rajarampuri",
+    "established_year": 2016,
+    "opening_time": "08:30:00",
+    "closing_time": "14:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": "40-50",
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "no",
+    "approx_price": "₹1–200",
+    "source_dataset": {
+      "google_rating": 4.2,
+      "google_reviews": 2546
+    },
+    "menu": {
+      "regular_misal_price": "₹90–110",
+      "special_misal_price": "₹130–150",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "30",
+      "solkadhi_price": "40",
+      "other_items": "Solkadhi"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "9:00–11:00 AM",
+      "approx_customers_per_day": "420",
+      "best_selling_dish": "Gavran misal",
+      "marketing_channels": "Google & Word of Mouth",
+      "biggest_challenge": "Limited Seating",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJkS7htu__wDsR8fq-0SFEVRk",
+      "verified_address": "9th Ln, opp. Sanchayani Park Apartments, Poorvarang, Rajarampuri, Kolhapur, Maharashtra 416008, India",
+      "lat": 16.6938785,
+      "lng": 74.2466093,
+      "phone": "+91 77769 51555",
+      "live_rating": 4.2,
+      "live_review_count": 2554,
+      "maps_url": "https://maps.google.com/?cid=1825440136012167921",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjDAei2MciCm-Rx775gVX88bGE5F_TKB7FnOPfM2etRcH-CGp5NkzHi1gstNTJr2ZezsYnFBAgpr5QCJZmSPj5XH7QrHA6w06V9AARn2ZC9WBpc-bWXx-k0aFBwr3a6gpzpTPcQftABYK7JBow=s4800-w800-h600",
+          "credit": "Raviraj Jadeja"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjCd0YGovRufcZHZmNNSpsWeayCSPRC-zni5g6SvWuT8ZFYHXtEdn838Of8oR1gLVlsQQ8GY65pKt6pbDCf8h7XJKmAhnYUfkV-O6EwQMIb6KtqWeHKREbPI6KSw_GaTsgpY1fhSl87qdRTrow=s4800-w800-h600",
+          "credit": "Avadhut Shivane"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H005",
+    "name": "Kolhapuri Wada Misal",
+    "area": "Rajarampuri",
+    "established_year": 2019,
+    "opening_time": "08:30:00",
+    "closing_time": "16:30:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": "40-50",
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–204",
+    "source_dataset": {
+      "google_rating": 4.4,
+      "google_reviews": 1335
+    },
+    "menu": {
+      "regular_misal_price": "₹90–110",
+      "special_misal_price": "₹130–150",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "30",
+      "solkadhi_price": "40",
+      "other_items": "Bread"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "8:30–10:30 AM",
+      "approx_customers_per_day": "280",
+      "best_selling_dish": "Wada Special Misal",
+      "marketing_channels": "Instagram",
+      "biggest_challenge": "Parking",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJayeo7XgBwTsRxJURNOvPwLA",
+      "verified_address": "9th Ln, Mali Colony, Sanmitra Housing Society, Rajarampuri, Kolhapur, Maharashtra 416008, India",
+      "lat": 16.6939412,
+      "lng": 74.2455125,
+      "phone": "+91 88923 86666",
+      "live_rating": 4.4,
+      "live_review_count": 1354,
+      "maps_url": "https://maps.google.com/?cid=12736408355301594564",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjAJsIfPIdcKZ-DcjJ2JO59Y2899avI3UqPrOnIZ6cyzD7JxBoDFD3VdMOYUEQ8f6W0WT9sHjkWB38Q-VnvJINs22UUodcss1Yb9UeSGBNlkNrkQ55Y_RIrsQ9s9GoaUYXa1ZyijN5PBtA9KVA=s4800-w734-h413",
+          "credit": "Kolhapuri Wada Misal And South Indian restaurant"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjBMsfPv0rGPhmWS9O7BPr-HGhoGytnsp0LJUk-5lgG8J8gqhSlt6Xn6iO4KafVoSfg6tLBPjnzkWkekXkjvFZPwBgsR5sayKZmO84cyTxgYl0dYD8tfCQ_osfTgj7kJw_ZSSrSEDQlypv1vng=s4800-w800-h600",
+          "credit": "Kolhapuri Wada Misal And South Indian restaurant"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H006",
+    "name": "Shiv Misal",
+    "area": "New Shahupuri",
+    "established_year": 2008,
+    "opening_time": "09:00:00",
+    "closing_time": "14:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": "40-50",
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–205",
+    "source_dataset": {
+      "google_rating": 4.4,
+      "google_reviews": 891
+    },
+    "menu": {
+      "regular_misal_price": "₹80–100",
+      "special_misal_price": "₹120–140",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "25",
+      "solkadhi_price": "40",
+      "other_items": "Tea"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "9:00–11:00 AM",
+      "approx_customers_per_day": "250",
+      "best_selling_dish": "Special Misal",
+      "marketing_channels": "Word of Mouth",
+      "biggest_challenge": "Competition",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJpcmYXXIAwTsRbhAF-VyxDyY",
+      "verified_address": "Off Dasara Chowk, behind CPR, New Shahupuri, Kolhapur, Maharashtra 416002, India",
+      "lat": 16.7016601,
+      "lng": 74.2277658,
+      "phone": "+91 96656 43434",
+      "live_rating": 4.4,
+      "live_review_count": 898,
+      "maps_url": "https://maps.google.com/?cid=2742605710964887662",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjBZ-zdvOZYe7NnzrjbvWQEN1OAOfCEOc9RvCLPXDZv3cKlGNBkGY3ztJ5Cxn9aBpgj_bQWtvyl21zezgo39MOqgDIKeZY5tG0jXm4iyGRUUGw47TUOdwStl7sB4e_otMsWg6Dxb1QuGEq1fTefaF380fA=s4800-w800-h600",
+          "credit": "Sagar Paradkar"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjChbJbAemvxUqdYjlCPd_Zd0YTPpiD3d0G0vJBRcpqS5gf09HJ_eN5Yi_XQXOnFtAsw0c8LgdumilAVL8G7qCjJcOl44BLstgYdE1LKSTHYvZCog8kdmLBulPZVrgW3rkWJvnjLsQ-5gryjRA=s4800-w800-h600",
+          "credit": "Sachin Hoge"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H007",
+    "name": "THOMBARE MISAL",
+    "area": "Raviwar Peth",
+    "established_year": 1970,
+    "opening_time": "09:00:00",
+    "closing_time": "13:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": "40-50",
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–206",
+    "source_dataset": {
+      "google_rating": 4.4,
+      "google_reviews": 808
+    },
+    "menu": {
+      "regular_misal_price": "₹80–100",
+      "special_misal_price": "₹120–140",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "25",
+      "solkadhi_price": "40",
+      "other_items": "Bread"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "8:30–10:00 AM",
+      "approx_customers_per_day": "220",
+      "best_selling_dish": "Regular misal",
+      "marketing_channels": "Local Advertising",
+      "biggest_challenge": "Small dining area",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJncnycA0AwTsR8sPAP0JzhVk",
+      "verified_address": "Shop No 01, 1020, Bhoi Galli, Raviwar Peth, C Ward, Kolhapur, Maharashtra 416002, India",
+      "lat": 16.6965788,
+      "lng": 74.2291129,
+      "phone": "+91 95615 69777",
+      "live_rating": 4.4,
+      "live_review_count": 822,
+      "maps_url": "https://maps.google.com/?cid=6450688769652737010",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjAUjtsn7Y6A4AhH6KZ3FRxyN-Vv8N-ln8x0gycI7rts3ItdClMqsZMwk2EkmZ32Ba0jtm2lKaCPGrHDLq2v3NQ-PwM7oUXmYZZyCTORBKQwk1BA5xRDiO-CkI2MW5W9F1FcvDpXAWwSCa5mRQ=s4800-w800-h600",
+          "credit": "Rohan Kulkarni"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjDvpaPMsYvO613u3m5jRyPp4TuYpGHEmaqcKnEZvYacoC2WqAfrWtBz2ea_nWJMkrjYg2Zx_HlFkA6_L7rvh0f1VWDe0DFgKbyhCq_iYBOI52jjry0WakZUP_FlnBQjwslNBDX8S6-0nBDqhCcF5DYu=s4800-w800-h600",
+          "credit": "Mahesh D"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H008",
+    "name": "Chorge Misal Kolhapur",
+    "area": "Near Mahalaxmi Temple",
+    "established_year": 2019,
+    "opening_time": "08:00:00",
+    "closing_time": "19:30:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": "40-50",
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–207",
+    "source_dataset": {
+      "google_rating": 4.2,
+      "google_reviews": 541
+    },
+    "menu": {
+      "regular_misal_price": "₹90–110",
+      "special_misal_price": "₹130–150",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "30",
+      "solkadhi_price": "40",
+      "other_items": "Coffee"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "9:00–11:00 AM",
+      "approx_customers_per_day": "260",
+      "best_selling_dish": "chorge Special Misal",
+      "marketing_channels": "Google, Instagram",
+      "biggest_challenge": "High competition",
+      "peak_working_days": "Friday,Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJyyiXzGMBwTsRp-DPGW8I8ao",
+      "verified_address": "Gujari corner, Mahadwar Rd, near Mahalaxmi Temple, C Ward, Kolhapur, Maharashtra 416012, India",
+      "lat": 16.696011,
+      "lng": 74.2216564,
+      "phone": "+91 94044 31050",
+      "live_rating": 4.2,
+      "live_review_count": 548,
+      "maps_url": "https://maps.google.com/?cid=12317635729102463143",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": "http://choragemisal.com/",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjBUjxpnPIRO6IrQXVP0sRzSGq6seiNidUW1l2vWpVdrGA964_STFwroRPdSOV1mS2U7ewbkbWkDXdffE9MLcIqECADBAEmeZyPXQo-jGp3XAYf_y82F9phhtRZ5yQ2DfxWWv99seYt9e7SSp-Y=s4800-w800-h600",
+          "credit": "Swapnil Mahajan"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjDyOkGTPyYda6-ABXtZDzIEoRQ5NwCle00b-kKLqp9dZW-aYecoSu29qTInhqF9NAHtZWjW-zMWBrzkvm3qfeyN1Le88Lp9o47RAJzSLWyuvo7Zte1I2fk1HBNWiS-7fSpVuapom_NHtDkVqt0=s4800-w800-h600",
+          "credit": "Chorge Misal Kolhapur"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H009",
+    "name": "Salokhe Misal Centre",
+    "area": "Bapat Camp",
+    "established_year": 2000,
+    "opening_time": "07:30:00",
+    "closing_time": "16:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": "40-50",
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–208",
+    "source_dataset": {
+      "google_rating": 4.4,
+      "google_reviews": 399
+    },
+    "menu": {
+      "regular_misal_price": "₹90–110",
+      "special_misal_price": "₹130–150",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "30",
+      "solkadhi_price": "40",
+      "other_items": "Tea"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "8:30–11:00 AM",
+      "approx_customers_per_day": "320",
+      "best_selling_dish": "Station Special Misal",
+      "marketing_channels": "Google & Social Media",
+      "biggest_challenge": "Parking",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJgYxNSokBwTsR9BsTPjLx6VM",
+      "verified_address": "Unnamed Road, Bapat Camp, Kolhapur, Maharashtra 416005, India",
+      "lat": 16.7079568,
+      "lng": 74.266921,
+      "phone": "+91 88307 79116",
+      "live_rating": 4.4,
+      "live_review_count": 400,
+      "maps_url": "https://maps.google.com/?cid=6046629172813700084",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjBXDKFje4V7mEOldmBQGz2_7aSi_44IrdQMQtGfZmqinFGzniYm58eAbMpKdHbDChnJOVX59iWfrJ6hLZakpBvtxO40t8_Hgzo3WgdXFTwY_EtGyuvKHOflRDTLITZbjTPh07ElwJbAbRsXJ9EnRVOr=s4800-w800-h600",
+          "credit": "Mahesh"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjBBMjDIKMMTbtV8t-sjdp7jTaEXjDRK--tngcCUWDc50QhiOiwZIrZoxVKp29Mwk397FyVP90LlSjAGww4HxocXX3tvbPy9eGRYfxJIsUPqEL5xRGUTPwHJ-Odxj3IGv1YUzoCrPrJ8-JL5z2w=s4800-w800-h600",
+          "credit": "Rohan Pai"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H010",
+    "name": "Misal Station",
+    "area": "Mangalwar Peth",
+    "established_year": 2017,
+    "opening_time": "07:00:00",
+    "closing_time": "17:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": 30,
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–209",
+    "source_dataset": {
+      "google_rating": 3.9,
+      "google_reviews": 1237
+    },
+    "menu": {
+      "regular_misal_price": "₹90–11",
+      "special_misal_price": "₹130–150",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "30",
+      "solkadhi_price": "40",
+      "other_items": "Bread"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "8:00–10:30 AM",
+      "approx_customers_per_day": "290",
+      "best_selling_dish": "Special Misal",
+      "marketing_channels": "Word of Mouth",
+      "biggest_challenge": "Limited staff",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJMa-VSAkAwTsRS2rsLcgs_4A",
+      "verified_address": "1258, B Ward, Khari Corner, Mangalwar Peth, C Ward, Kolhapur, Maharashtra 416012, India",
+      "lat": 16.6917524,
+      "lng": 74.2232246,
+      "phone": "+91 98507 98970",
+      "live_rating": 3.9,
+      "live_review_count": 1240,
+      "maps_url": "https://maps.google.com/?cid=9295197394191542859",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjBYD9AKwwetRefyOfMCoCkY2EzaRfoEIAfHly2PkZJ--hC1Aq0Y93hzz6T_ugt4-FDbn34MkPbAjFqKrapi_pY1oRy_lYtdFgwec6fKdXg8FP8uciy2oXeP9EabgbmjU8ZwfnvxGQvtn-hf=s4800-w800-h600",
+          "credit": "S.B. Kulkarni"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjAu6O8Jsovt0Z4zSyor2exYrF-pnsQ-CU9M3vn2GVTAiEwDWQBZ6ffqLTALXkRa_CzAWabxN6rzMhUITpDcPJgtsoV-ReWyt1QAsUbFBz2qKN3DBNhFmNMmLlAC5MIymVKuavelfjHPb5U=s4800-w800-h600",
+          "credit": "Jayant Patil"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H011",
+    "name": "Kolhapur Misal by Amit Mathapati",
+    "area": "Shivaji Peth",
+    "established_year": 2000,
+    "opening_time": "08:00:00",
+    "closing_time": "15:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": 40,
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–200",
+    "source_dataset": {
+      "google_rating": 4.4,
+      "google_reviews": 135
+    },
+    "menu": {
+      "regular_misal_price": "₹90–110",
+      "special_misal_price": "₹130–150",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "30",
+      "solkadhi_price": "40",
+      "other_items": "Dahi Misal"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "8:30–10:30 AM",
+      "approx_customers_per_day": "240",
+      "best_selling_dish": "Regular Misal",
+      "marketing_channels": "Instagram",
+      "biggest_challenge": "Brand awareness",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJU9AHdtYBwTsRGuBFN6zFef0",
+      "verified_address": "Shivaji Peth, A Ward, C Ward, Kolhapur, Maharashtra 416012, India",
+      "lat": 16.6942591,
+      "lng": 74.2191329,
+      "phone": "+91 90215 75210",
+      "live_rating": 4.4,
+      "live_review_count": 135,
+      "maps_url": "https://maps.google.com/?cid=18264847107230130202",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjD-isrEh06khP7Gxg4IN7Cr3t-VVHxrJBa4oQg1kPOVIIuxh3aGCbGZbQxCO5ZhGeAGXIIX7s6kpKEeNE9KGUwnvOSYaIDov1esQDie1pCGVypcDgOPZRNztJl9oibtPL__YxG6Ni2PTSON8w=s4800-w800-h600",
+          "credit": "Kolhapur Misal By Amit Mathapati"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjCXm1rBIivOemDExJgcsZvTzUSDAE-WoLJin5-kzYY2FhXvKRQW5YxzS0f2aXrX0yK-8YQJfGLFXCHGU411sCthxJApHfa8eWu3Wl6LV9eiwVhS3CisrYZkCeJslF_KIkyv0EhTCn0DEZlc=s4800-w800-h600",
+          "credit": "Ajay Patil"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H012",
+    "name": "Kalamba Misal",
+    "area": "Kalamba",
+    "established_year": 1999,
+    "opening_time": "09:00:00",
+    "closing_time": "16:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": 60,
+    "employees": null,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–200",
+    "source_dataset": {
+      "google_rating": 5.0,
+      "google_reviews": 20
+    },
+    "menu": {
+      "regular_misal_price": "₹90–110",
+      "special_misal_price": "₹130–150",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "30",
+      "solkadhi_price": "40",
+      "other_items": "Coffee"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "9:00–11:00 AM",
+      "approx_customers_per_day": "300",
+      "best_selling_dish": "Special Misal",
+      "marketing_channels": "Facebook & Word of Mouth",
+      "biggest_challenge": "Low weekday footfall",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJU8k6LQBVwDsRhSg5tCzBSJI",
+      "verified_address": "Suvarna Bhumi Colony, near Kalamba Jail, Tirmurti Colony, Kalamba, Kolhapur, Maharashtra 416007, India",
+      "lat": 16.6661323,
+      "lng": 74.2139685,
+      "phone": "+91 95795 87676",
+      "live_rating": 4.3,
+      "live_review_count": 230,
+      "maps_url": "https://maps.google.com/?cid=10540887325607012485",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjBr6yqzOeBQEBZ0ym-OjmdwOvr--cxqxwko7olvMp3tx_98pdkPg-XA8z_oifs_ljjge3xIVBpg0IABOSO7ndCLhIvlNIsbNfsy05b4IHTuUp3UK1vk9VTKAc4mNWE5pFjECkpLQAZyqRQnCcep_IMyDw=s4800-w800-h600",
+          "credit": "Shivraj Patil SP Photo & Films"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjDcy70_JkpHw1gXb_VbWzgfcqeNL6EQD65UwF3_Ht0c06r0aGb0U0ibWG1cOYZ3z98nUSLklxhpPD5MqT7aaz3IBi8pLcvRHzWX1oNCe_kDbSBfqOiQnY-0GxyqaPyraefbKc-t1wIMjzwndxJNH5rVtA=s4800-w800-h600",
+          "credit": "Shivraj Patil SP Photo & Films"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  },
+  {
+    "hotel_id": "H013",
+    "name": "Shahu misal",
+    "area": "Rajarampuri",
+    "established_year": 2023,
+    "opening_time": "09:00:00",
+    "closing_time": "16:00:00",
+    "weekly_off": "NO/ only in Emergency",
+    "seating_capacity": 30,
+    "employees": 6.0,
+    "parking": "yes",
+    "upi": "yes",
+    "delivery": "yes",
+    "approx_price": "₹1–200",
+    "source_dataset": {
+      "google_rating": 4.4,
+      "google_reviews": 498
+    },
+    "menu": {
+      "regular_misal_price": "₹90–110",
+      "special_misal_price": "₹130–150",
+      "tea_coffee_price": "20",
+      "buttermilk_price": "30",
+      "solkadhi_price": "40",
+      "other_items": "Tea"
+    },
+    "customer_survey": null,
+    "operations": {
+      "peak_hours": "9:30–11:30 AM",
+      "approx_customers_per_day": "270",
+      "best_selling_dish": "Shahu Special Misal",
+      "marketing_channels": "Instagram & Google",
+      "biggest_challenge": "Customer waiting time",
+      "peak_working_days": "Saturday, Sunday"
+    },
+    "google_places": {
+      "place_id": "ChIJz0upFwYBwTsREZE8Q0yAaeM",
+      "verified_address": "Senapati Bapat Road, 9th Line, near Sanchayani Park, Poorvarang, Mahalaxminagar, Rajarampuri, Kolhapur, Maharashtra 416008, India",
+      "lat": 16.694139,
+      "lng": 74.2463617,
+      "phone": null,
+      "live_rating": 4.3,
+      "live_review_count": 509,
+      "maps_url": "https://maps.google.com/?cid=16386769784198172945",
+      "note": "photos[] already includes real Google Places photo URLs + contributor credit for this rebuild; refresh periodically via the Places Photo API using place_id rather than re-scraping.",
+      "website": null,
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjBOve7d7RQHSZ2OrmBYlUuH6sbDoDWMCKdLE62WHCT-1mYmy5VGHw4kat_4cG5pD62oP1m9YevJmnZMgEVwVMVIBZcuiBcgsny3ZkfE0kzVRnTmHwn5gU6QUosl2QTgez-XvOAAx7iiBmKX6yNMmoKwxA=s4800-w800-h600",
+          "credit": "Shahu misal"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AG9NLjA_Kb6qnkhZsmoguTgHSrwFG8rBSSe-Baw_YSvVvRj7f2XY3I7zshedOQJ-TbxHvMNRa5D08SBvM2wHo304LKhR9nQHaTihIacYyzUJhIo6C6g2UaOsxZUT6_SDJU8dhIoWbBomQ-nJnVIe8FN2lCCYqQ=s4800-w800-h600",
+          "credit": "Viraj Patil"
+        }
+      ],
+      "photo_attribution_required": "Yes — each photo must display its 'credit' name per Google's Places API attribution requirement; do not strip this when caching."
+    }
+  }
+]
