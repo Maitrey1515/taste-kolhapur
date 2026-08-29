@@ -17,29 +17,36 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([
-      getDocs(query(collection(db, 'restaurants'), orderBy('taste_score', 'desc'), limit(6))),
-      getDocs(query(
-        collection(db, 'restaurant_events'), 
-        where('is_active', '==', true), 
-        where('start_date', '>=', new Date().toISOString().split('T')[0]), 
-        orderBy('start_date', 'asc'), 
-        limit(4)
-      ))
-    ]).then(async ([restaurantsSnap, eventsSnap]) => {
-      setTopRestaurants(restaurantsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as Restaurant[]);
-      
-      const evsData = await Promise.all(eventsSnap.docs.map(async (d) => {
-        const ev = { id: d.id, ...d.data() } as any;
-        if (ev.restaurant_id) {
-          const rDoc = await getDoc(doc(db, 'restaurants', ev.restaurant_id));
-          if (rDoc.exists()) ev.restaurant = { name: rDoc.data().name, area: rDoc.data().area, slug: rDoc.data().slug };
-        }
-        return ev;
-      }));
-      setEvents(evsData as RestaurantEvent[]);
-      setLoading(false);
-    });
+    const fetchData = async () => {
+      try {
+        const [restaurantsSnap, eventsSnap] = await Promise.all([
+          getDocs(query(collection(db, 'restaurants'), orderBy('taste_score', 'desc'), limit(6))),
+          getDocs(query(
+            collection(db, 'restaurant_events'), 
+            where('start_date', '>=', new Date().toISOString().split('T')[0]), 
+            orderBy('start_date', 'asc'), 
+            limit(4)
+          ))
+        ]);
+
+        setTopRestaurants(restaurantsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as Restaurant[]);
+        
+        const evsData = await Promise.all(eventsSnap.docs.map(async (d) => {
+          const ev = { id: d.id, ...d.data() } as any;
+          if (ev.restaurant_id) {
+            const rDoc = await getDoc(doc(db, 'restaurants', ev.restaurant_id));
+            if (rDoc.exists()) ev.restaurant = { name: rDoc.data().name, area: rDoc.data().area, slug: rDoc.data().slug };
+          }
+          return ev;
+        }));
+        setEvents(evsData as RestaurantEvent[]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
