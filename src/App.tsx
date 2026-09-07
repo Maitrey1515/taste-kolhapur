@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
 import ChatWindow from '@/components/ChatWindow';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import ToastContainer from '@/components/Toast';
 
 // Customer pages
 import Home from '@/pages/Home';
@@ -100,6 +101,9 @@ export default function App() {
 
       {/* Global floating chatbot */}
       <ChatWindow />
+      
+      {/* Toast notifications */}
+      <ToastContainer />
     </div>
   );
 }
