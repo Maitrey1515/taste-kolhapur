@@ -40,9 +40,9 @@ export default function EventCard({ event, className }: Props) {
           <h3 className="font-display font-semibold text-sm text-[var(--text-primary)] line-clamp-2">
             {EVENT_EMOJIS[event.type] ?? '📅'} {event.title}
           </h3>
-          <span className={clsx('badge flex-shrink-0', EVENT_COLORS[event.type] ?? 'badge-gray')}>
+          <span className={clsx('badge flex-shrink-0', event.type && EVENT_COLORS[event.type] ? EVENT_COLORS[event.type] : 'badge-gray')}>
             <Tag className="w-2.5 h-2.5" />
-            {event.type.replace('_', ' ')}
+            {event.type ? event.type.replace('_', ' ') : 'Event'}
           </span>
         </div>
 

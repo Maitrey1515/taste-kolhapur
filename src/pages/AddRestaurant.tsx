@@ -23,27 +23,7 @@ export default function AddRestaurant() {
   
   const [otp, setOtp] = useState('');
 
-  useEffect(() => {
-    if (!(window as any).recaptchaVerifier) {
-      try {
-        (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          size: 'invisible',
-          callback: (response: any) => {
-            console.log('reCAPTCHA solved', response);
-          }
-        });
-      } catch (e) {
-        console.error("Failed to initialize recaptcha", e);
-      }
-    }
-    
-    return () => {
-      if ((window as any).recaptchaVerifier) {
-        (window as any).recaptchaVerifier.clear();
-        (window as any).recaptchaVerifier = null;
-      }
-    };
-  }, []);
+  // Recaptcha will be initialized on demand when the user submits the form
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();

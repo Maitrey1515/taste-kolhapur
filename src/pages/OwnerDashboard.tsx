@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, doc, updateDoc, addDoc, deleteDoc, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, addDoc, deleteDoc, orderBy, getDoc, increment } from 'firebase/firestore';
 import type { Restaurant, Review, RestaurantEvent } from '@/types';
 import { 
   Building, QrCode, Calendar, MessageSquare, Edit3, Settings, 
@@ -11,6 +11,7 @@ import { showToast } from '@/components/Toast';
 import QRDisplay from '@/components/QRDisplay';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import ReviewCard from '@/components/ReviewCard';
 import clsx from 'clsx';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -18,11 +19,12 @@ export default function OwnerDashboard() {
   const { user } = useAuth();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview'|'qr'|'events'|'edit'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview'|'qr'|'events'|'edit'|'reviews'>('overview');
   
   // Data state
   const [stats, setStats] = useState({ views: 1245, scans: 342, recentRating: 4.2 });
   const [events, setEvents] = useState<RestaurantEvent[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [chartData, setChartData] = useState<{name:string, rating:number}[]>([]);
   
   // Edit State
@@ -64,6 +66,33 @@ export default function OwnerDashboard() {
           if (evs) setEvents(evs as RestaurantEvent[]);
         } catch (e) {
           console.error("Failed to fetch events", e);
+        }
+        
+        // Fetch reviews
+        try {
+          const reviewsQ = query(collection(db, 'reviews'), where('restaurant_id', '==', data.id), orderBy('created_at', 'desc'));
+          const reviewsSnap = await getDocs(reviewsQ);
+          const reviewsData = await Promise.all(reviewsSnap.docs.map(async (d) => {
+            const review = { id: d.id, ...d.data() } as any;
+            if (review.user_id) {
+              const uDoc = await getDoc(doc(db, 'profiles', review.user_id));
+              if (uDoc.exists()) review.reviewer = { id: uDoc.id, ...uDoc.data() };
+            }
+            const repliesQ = query(collection(db, 'review_replies'), where('review_id', '==', d.id));
+            const repliesSnap = await getDocs(repliesQ);
+            review.replies = await Promise.all(repliesSnap.docs.map(async (rd: any) => {
+              const reply = { id: rd.id, ...rd.data() } as any;
+              if (reply.owner_id) {
+                const oDoc = await getDoc(doc(db, 'profiles', reply.owner_id));
+                if (oDoc.exists()) reply.owner = oDoc.data();
+              }
+              return reply;
+            }));
+            return review;
+          }));
+          setReviews(reviewsData as Review[]);
+        } catch (e) {
+          console.error("Failed to fetch reviews", e);
         }
         
         // Generate mock chart data for the BI dashboard
@@ -132,6 +161,45 @@ export default function OwnerDashboard() {
     setConfirmDelete(null);
   };
 
+  const handleHelpful = async (reviewId: string) => {
+    await updateDoc(doc(db, 'reviews', reviewId), { helpful_count: increment(1) });
+    setReviews(rs => rs.map(r => r.id === reviewId ? { ...r, helpful_count: r.helpful_count + 1 } : r));
+  };
+
+  const handleOwnerReply = async (reviewId: string, content: string) => {
+    if (!user) return;
+    try {
+      await addDoc(collection(db, 'review_replies'), {
+        review_id: reviewId, owner_id: user.uid, content, created_at: new Date().toISOString()
+      });
+      showToast({ type: 'success', title: 'Reply posted' });
+      // Quick manual reload of reviews so we see it immediately
+      const reviewsQ = query(collection(db, 'reviews'), where('restaurant_id', '==', restaurant!.id), orderBy('created_at', 'desc'));
+      const reviewsSnap = await getDocs(reviewsQ);
+      const reviewsData = await Promise.all(reviewsSnap.docs.map(async (d) => {
+        const review = { id: d.id, ...d.data() } as any;
+        if (review.user_id) {
+          const uDoc = await getDoc(doc(db, 'profiles', review.user_id));
+          if (uDoc.exists()) review.reviewer = { id: uDoc.id, ...uDoc.data() };
+        }
+        const repliesQ = query(collection(db, 'review_replies'), where('review_id', '==', d.id));
+        const repliesSnap = await getDocs(repliesQ);
+        review.replies = await Promise.all(repliesSnap.docs.map(async (rd: any) => {
+          const reply = { id: rd.id, ...rd.data() } as any;
+          if (reply.owner_id) {
+            const oDoc = await getDoc(doc(db, 'profiles', reply.owner_id));
+            if (oDoc.exists()) reply.owner = oDoc.data();
+          }
+          return reply;
+        }));
+        return review;
+      }));
+      setReviews(reviewsData as Review[]);
+    } catch(err) {
+      showToast({ type: 'error', title: 'Error posting reply' });
+    }
+  };
+
   if (loading) return <LoadingSpinner fullScreen />;
 
   if (!restaurant) {
@@ -151,6 +219,7 @@ export default function OwnerDashboard() {
     { id: 'overview', label: 'Overview', icon: BarChart2 },
     { id: 'qr',       label: 'QR Scanner', icon: QrCode },
     { id: 'events',   label: 'Manage Events', icon: Calendar },
+    { id: 'reviews',  label: 'Customer Reviews', icon: MessageSquare },
     { id: 'edit',     label: 'Edit Details', icon: Edit3 },
   ] as const;
 
@@ -352,6 +421,31 @@ export default function OwnerDashboard() {
                   {saving ? <Loader2 className="w-4 h-4 animate-spin"/> : 'Save Changes'}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: Reviews */}
+        {activeTab === 'reviews' && (
+          <div className="animate-fade-in space-y-6">
+            <h2 className="text-xl font-display font-bold text-[var(--text-primary)] mb-4">Customer Reviews</h2>
+            
+            <div className="space-y-4">
+              {reviews.length === 0 ? (
+                <div className="text-center py-10 text-[var(--text-muted)] bg-[var(--surface-secondary)] rounded-2xl">
+                  No reviews yet. 
+                </div>
+              ) : (
+                reviews.map(review => (
+                  <ReviewCard
+                    key={review.id}
+                    review={review}
+                    onHelpful={handleHelpful}
+                    isOwner={true}
+                    onReply={handleOwnerReply}
+                  />
+                ))
+              )}
             </div>
           </div>
         )}

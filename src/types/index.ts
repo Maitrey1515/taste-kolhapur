@@ -86,6 +86,7 @@ export interface Restaurant {
   google_rating: number | null;
   google_reviews: number | null;
   approx_price: number | null;
+  google_place_id: string | null;
   created_at: string;
   updated_at: string;
   // Joined fields (optional)

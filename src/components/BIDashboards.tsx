@@ -18,26 +18,31 @@ export default function BIDashboards() {
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      const restsSnap = await getDocs(collection(db, 'restaurants'));
-      const restData = restsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      try {
+        const restsSnap = await getDocs(collection(db, 'restaurants'));
+        const restData = restsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-      const revsSnap = await getDocs(collection(db, 'reviews'));
-      const revData = revsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const revsSnap = await getDocs(collection(db, 'reviews'));
+        const revData = revsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-      const mpsData = restData.map(r => ({
-        restaurant_id: r.id,
-        restaurant_name: (r as any).name,
-        area: (r as any).area,
-        mps: (r as any).mps_score || 0,
-        overall_rating: (r as any).taste_score || (r as any).google_rating || 4,
-      }));
+        const mpsData = restData.map(r => ({
+          restaurant_id: r.id,
+          restaurant_name: (r as any).name,
+          area: (r as any).area,
+          mps: (r as any).mps_score || 0,
+          overall_rating: (r as any).taste_score || (r as any).google_rating || 4,
+        }));
 
-      setData({
-        mps: mpsData || [],
-        reviews: revData || [],
-        restaurants: restData || [],
-      });
-      setLoading(false);
+        setData({
+          mps: mpsData || [],
+          reviews: revData || [],
+          restaurants: restData || [],
+        });
+      } catch (err) {
+        console.error("Error fetching BI dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
     }
     loadData();
   }, []);

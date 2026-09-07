@@ -92,11 +92,18 @@ export default function Discover() {
     if (filters.area) params.set('area', filters.area);
     if (filters.price_level) params.set('price_level', String(filters.price_level));
     if (filters.min_rating) params.set('min_rating', String(filters.min_rating));
-    if (filters.open_now) params.set('open_now', 'true');
-    if (filters.parking) params.set('parking', 'true');
+    
+    // Add all boolean flags
+    const booleanFlags: (keyof DiscoveryFilters)[] = [
+      'open_now', 'parking', 'family_friendly', 'ac', 'takeaway', 'delivery', 'wheelchair', 'veg'
+    ];
+    booleanFlags.forEach(flag => {
+      if (filters[flag]) params.set(flag, 'true');
+    });
+
     if (filters.sort !== 'relevance') params.set('sort', filters.sort);
     setSearchParams(params, { replace: true });
-  }, [filters, fetchRestaurants]);
+  }, [filters, fetchRestaurants, setSearchParams]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,8 +112,14 @@ export default function Discover() {
       setNlpHint('');
       return;
     }
-    const { filters: parsedFilters, cleanedSearch } = parseNLQuery(searchInput);
+    const { filters: parsedFilters, cleanedSearch, isNearMe } = parseNLQuery(searchInput);
     const hint = describeQuery(parsedFilters);
+    
+    if (isNearMe) {
+      window.location.href = '/nearby'; // Force navigate to nearby
+      return;
+    }
+    
     setNlpHint(hint);
     setFilters(f => ({ ...f, ...parsedFilters, search: cleanedSearch }));
   };
@@ -265,7 +278,7 @@ function parseFiltersFromURL(params: URLSearchParams): DiscoveryFilters {
     wheelchair:      params.get('wheelchair') === 'true',
     veg:             params.get('veg') === 'true',
     max_wait:        null,
-    max_distance:    null,
+    max_distance:    params.has('max_distance') ? Number(params.get('max_distance')) : null,
     sort:            (params.get('sort') as DiscoveryFilters['sort']) ?? 'relevance',
   };
 }

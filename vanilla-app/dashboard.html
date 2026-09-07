@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Redirect - TasteKolhapur</title>
+</head>
+<body>
+  <p>Loading your dashboard...</p>
+  <script type="module">
+    import { initAuth, subscribeToAuth } from './js/auth.js';
+    initAuth();
+    subscribeToAuth((user, profile) => {
+      if (!user) {
+        window.location.href = '/login.html';
+        return;
+      }
+      const role = profile?.role || 'customer';
+      window.location.href = `/dashboard-${role}.html`;
+    });
+  </script>
+</body>
+</html>

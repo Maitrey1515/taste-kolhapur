@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard - TasteKolhapur</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 transition-colors duration-300">
+
+  <div id="navbar-container"></div>
+
+  <main class="page-container py-8 space-y-8 min-h-screen">
+    
+    <div id="loading-state" class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full mb-4"></div>
+      <p class="text-gray-500">Loading dashboard...</p>
+    </div>
+
+    <div id="dashboard-content" class="hidden space-y-8">
+      
+      <!-- Profile Header -->
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-orange-200 bg-gradient-to-br from-orange-50 to-transparent">
+        <div class="flex flex-col md:flex-row gap-6 items-start">
+          <div class="w-24 h-24 rounded-2xl bg-gradient-misal p-1 flex-shrink-0 mx-auto md:mx-0">
+            <img id="profile-avatar" src="https://via.placeholder.com/150" class="w-full h-full object-cover rounded-xl border-2 border-white">
+          </div>
+          
+          <div class="flex-1 w-full">
+            <div class="flex items-center justify-between mb-4">
+              <h1 id="profile-name" class="text-2xl font-display font-bold text-gray-900">My Profile</h1>
+              <button id="btn-edit-profile" class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-gray-50">
+                <i data-lucide="edit-3" class="w-4 h-4"></i> <span id="edit-btn-text">Edit</span>
+              </button>
+            </div>
+            
+            <div id="view-profile" class="space-y-2">
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i> <span id="profile-city">City not set</span>
+              </div>
+              <p id="profile-bio" class="text-sm text-gray-600">No bio yet.</p>
+              <div class="flex gap-2 mt-2">
+                <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold" id="review-count-badge">0 Reviews</span>
+              </div>
+            </div>
+
+            <form id="edit-profile-form" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in">
+              <div>
+                <label class="block text-sm font-medium mb-1">Display Name</label>
+                <input type="text" id="edit-name" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-orange-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">City</label>
+                <input type="text" id="edit-city" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-orange-500">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium mb-1">Bio</label>
+                <input type="text" id="edit-bio" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-orange-500">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium mb-1">Avatar URL</label>
+                <input type="url" id="edit-avatar" class="w-full p-2 border border-gray-200 rounded-lg outline-none focus:border-orange-500">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <i data-lucide="compass" class="w-5 h-5 text-orange-500"></i>
+          <h2 class="text-xl font-display font-bold">Recommended for You</h2>
+        </div>
+        <div id="recommendations-container" class="space-y-8">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- My Reviews -->
+      <div>
+        <h2 class="text-xl font-display font-bold mb-4" id="reviews-header">My Reviews (0)</h2>
+        <div id="my-reviews-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script type="module" src="js/dashboard-customer.js"></script>
+</body>
+</html>

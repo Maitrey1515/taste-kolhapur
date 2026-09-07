@@ -54,10 +54,6 @@ function RequireAdmin({ children }: { children: React.ReactNode }) {
 
 // ─── Main App ─────────────────────────────────────────────────────────────
 export default function App() {
-  const { loading } = useAuth();
-
-  if (loading) return <LoadingSpinner fullScreen />;
-
   return (
     <div className="min-h-screen bg-[var(--surface)] transition-colors duration-300">
       <Navbar />
@@ -94,7 +90,9 @@ export default function App() {
         } />
 
         {/* Temporary Seed route */}
-        <Route path="/seed" element={<Seed />} />
+        <Route path="/seed" element={
+          <RequireAdmin><Seed /></RequireAdmin>
+        } />
 
         {/* 404 */}
         <Route path="*" element={<Navigate to="/" replace />} />

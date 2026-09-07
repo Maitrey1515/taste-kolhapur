@@ -26,17 +26,22 @@ export default function Events() {
         q = query(q, orderBy('start_date', 'desc'));
       }
 
-      const snap = await getDocs(q);
-      const data = await Promise.all(snap.docs.map(async d => {
-        const ev = { id: d.id, ...d.data() } as any;
-        if (ev.restaurant_id) {
-          const rDoc = await getDoc(doc(db, 'restaurants', ev.restaurant_id));
-          if (rDoc.exists()) ev.restaurant = { name: rDoc.data().name, area: rDoc.data().area, slug: rDoc.data().slug };
-        }
-        return ev;
-      }));
-      setEvents(data as RestaurantEvent[]);
-      setLoading(false);
+      try {
+        const snap = await getDocs(q);
+        const data = await Promise.all(snap.docs.map(async d => {
+          const ev = { id: d.id, ...d.data() } as any;
+          if (ev.restaurant_id) {
+            const rDoc = await getDoc(doc(db, 'restaurants', ev.restaurant_id));
+            if (rDoc.exists()) ev.restaurant = { name: rDoc.data().name, area: rDoc.data().area, slug: rDoc.data().slug };
+          }
+          return ev;
+        }));
+        setEvents(data as RestaurantEvent[]);
+      } catch (err) {
+        console.error("Error fetching events:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchEvents();
   }, [filter]);

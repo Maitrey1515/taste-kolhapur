@@ -19,10 +19,14 @@ export default function VerifyVisit() {
       // but for simplicity in this MVP we check auth.currentUser
       const user = auth.currentUser;
       
-      const q = query(collection(db, 'restaurants'), where('slug', '==', slug));
-      const snap = await getDocs(q);
-        
-      if (!snap.empty) setRestaurantName(snap.docs[0].data().name);
+      try {
+        const q = query(collection(db, 'restaurants'), where('slug', '==', slug));
+        const snap = await getDocs(q);
+          
+        if (!snap.empty) setRestaurantName(snap.docs[0].data().name);
+      } catch (err) {
+        console.error("Error fetching restaurant in VerifyVisit:", err);
+      }
 
       if (!user) {
         setStatus('error');

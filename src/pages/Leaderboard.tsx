@@ -10,6 +10,8 @@ import clsx from 'clsx';
 
 export default function Leaderboard() {
   const [scores, setScores] = useState<MPSScore[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     getDocs(collection(db, 'restaurants'))
       .then((snap) => {
@@ -32,6 +34,10 @@ export default function Leaderboard() {
         });
         mapped.sort((a, b) => b.mps - a.mps);
         setScores(mapped);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching leaderboard data:", error);
         setLoading(false);
       });
   }, []);

@@ -62,7 +62,15 @@ export default function Auth() {
       if (error) throw error;
       showToast({ type: 'success', title: 'Signed in with Google' });
     } catch (err: any) {
-      showToast({ type: 'error', title: 'Google Sign-in failed', message: err.message });
+      if (err.code === 'auth/popup-closed-by-user' || err.message.includes('auth/popup-closed-by-user')) {
+        // user cancelled, do nothing
+      } else if (err.code === 'auth/unauthorized-domain' || err.message.includes('auth/unauthorized-domain')) {
+        showToast({ type: 'error', title: 'Google Sign-in failed', message: "This domain isn't authorized for Google sign-in yet. Add it in Firebase Console → Authentication → Settings → Authorized domains." });
+      } else if (err.code === 'auth/popup-blocked' || err.message.includes('auth/popup-blocked')) {
+        showToast({ type: 'error', title: 'Google Sign-in failed', message: "Your browser blocked the sign-in popup. Please allow popups for this site and try again." });
+      } else {
+        showToast({ type: 'error', title: 'Google Sign-in failed', message: err.message });
+      }
     } finally {
       setLoading(false);
     }

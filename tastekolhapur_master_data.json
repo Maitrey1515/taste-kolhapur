@@ -28,10 +28,10 @@
     "customer_survey": {
       "sample_size": 5,
       "avg_taste": 4.6,
-      "avg_service": 4.0,
-      "avg_cleanliness": 5.0,
+      "avg_service": 4,
+      "avg_cleanliness": 5,
       "avg_value_for_money": 4.2,
-      "recommend_pct": 100.0
+      "recommend_pct": 100
     },
     "operations": {
       "peak_hours": "9–11 AM",
@@ -94,10 +94,10 @@
     "customer_survey": {
       "sample_size": 5,
       "avg_taste": 4.6,
-      "avg_service": 4.0,
-      "avg_cleanliness": 5.0,
+      "avg_service": 4,
+      "avg_cleanliness": 5,
       "avg_value_for_money": 4.4,
-      "recommend_pct": 100.0
+      "recommend_pct": 100
     },
     "operations": {
       "peak_hours": "   8–10 AM",
@@ -160,10 +160,10 @@
     "customer_survey": {
       "sample_size": 3,
       "avg_taste": 4.67,
-      "avg_service": 4.0,
-      "avg_cleanliness": 5.0,
+      "avg_service": 4,
+      "avg_cleanliness": 5,
       "avg_value_for_money": 4.33,
-      "recommend_pct": 100.0
+      "recommend_pct": 100
     },
     "operations": {
       "peak_hours": "9:00–11:30 AM",
@@ -684,7 +684,7 @@
     "delivery": "yes",
     "approx_price": "₹1–200",
     "source_dataset": {
-      "google_rating": 5.0,
+      "google_rating": 5,
       "google_reviews": 20
     },
     "menu": {
@@ -737,7 +737,7 @@
     "closing_time": "16:00:00",
     "weekly_off": "NO/ only in Emergency",
     "seating_capacity": 30,
-    "employees": 6.0,
+    "employees": 6,
     "parking": "yes",
     "upi": "yes",
     "delivery": "yes",
@@ -768,7 +768,7 @@
       "verified_address": "Senapati Bapat Road, 9th Line, near Sanchayani Park, Poorvarang, Mahalaxminagar, Rajarampuri, Kolhapur, Maharashtra 416008, India",
       "lat": 16.694139,
       "lng": 74.2463617,
-      "phone": null,
+      "phone": "+91 84888 45447",
       "live_rating": 4.3,
       "live_review_count": 509,
       "maps_url": "https://maps.google.com/?cid=16386769784198172945",

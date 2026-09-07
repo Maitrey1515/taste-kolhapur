@@ -43,6 +43,10 @@ export default function Nearby() {
             .sort((a, b) => (a.distance_km ?? 99) - (b.distance_km ?? 99));
           setRestaurants(withDistances);
           setLoading(false);
+        })
+        .catch(err => {
+          console.error("Error fetching nearby restaurants:", err);
+          setLoading(false);
         });
     }
   }, [coords]);

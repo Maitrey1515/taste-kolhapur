@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TasteKolhapur - Find Your Perfect Misal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-white text-gray-900 transition-colors duration-300">
+
+  <!-- Navbar Injection Point -->
+  <div id="navbar-container"></div>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="relative min-h-[520px] flex items-center overflow-hidden">
+      <div class="absolute inset-0">
+        <img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=1600&q=85" alt="Kolhapur Misal" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30"></div>
+      </div>
+
+      <div class="relative page-container py-20 w-full z-10">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/20 border border-orange-500/40 backdrop-blur-sm mb-4">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-orange-400"></i>
+            <span class="text-orange-300 text-xs font-medium">Kolhapur's #1 Misal Discovery Platform</span>
+          </div>
+
+          <h1 class="font-display font-black text-5xl sm:text-6xl text-white leading-tight mb-4">
+            Find Your Perfect<br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">Misal</span> in Kolhapur
+          </h1>
+          
+          <p class="text-white/70 text-lg mb-8 leading-relaxed">
+            Discover, rate, and explore 13+ authentic Misal restaurants across Kolhapur.
+            AI-powered recommendations based on your taste.
+          </p>
+
+          <form id="hero-search-form" class="relative flex items-center mb-2">
+            <i data-lucide="search" class="absolute left-4 w-5 h-5 text-gray-400 z-10"></i>
+            <input id="hero-search" type="text" placeholder='Try "cheap spicy misal open now near Rankala"' 
+              class="w-full pl-12 pr-36 py-4 rounded-2xl bg-white/95 text-gray-900 placeholder-gray-400 text-sm border-0 focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-2xl backdrop-blur-sm" />
+            <button type="submit" class="absolute right-2 px-6 py-2.5 bg-gradient-misal text-white rounded-xl font-medium hover:opacity-90">Search</button>
+          </form>
+          <p class="text-white/50 text-xs ml-1 mb-8">💡 Try natural language: "family friendly with parking", "best value under ₹100"</p>
+
+          <div class="flex gap-6">
+            <div><div id="stat-rests" class="text-2xl font-bold text-white">0</div><div class="text-white/50 text-xs">Restaurants</div></div>
+            <div><div id="stat-rating" class="text-2xl font-bold text-white">0.0★</div><div class="text-white/50 text-xs">Avg Rating</div></div>
+            <div><div id="stat-reviews" class="text-2xl font-bold text-white">0</div><div class="text-white/50 text-xs">Real Reviews</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="py-10 bg-gray-50 border-b border-gray-100">
+      <div class="page-container flex overflow-x-auto gap-3 pb-2" id="categories-container">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- Top Restaurants -->
+    <section class="py-14 page-container">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold flex items-center gap-2">
+            <i data-lucide="trophy" class="w-6 h-6 text-amber-500"></i> Top Rated Restaurants
+          </h2>
+          <p class="text-gray-500 text-sm mt-1">Ranked by community ratings & MPS</p>
+        </div>
+        <a href="/discover.html?sort=rating" class="text-sm font-medium text-gray-600 hover:text-orange-500 flex items-center gap-1 group">
+          See all <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+        </a>
+      </div>
+      
+      <div id="top-restaurants-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- Features strip -->
+    <section class="py-10 bg-gradient-to-r from-orange-500 to-red-500">
+      <div class="page-container grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="flex items-start gap-3 text-white">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="sparkles"></i></div>
+          <div><p class="font-bold text-sm">AI Recommendations</p><p class="text-white/70 text-xs mt-0.5">Matched to your taste profile</p></div>
+        </div>
+        <div class="flex items-start gap-3 text-white">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="star"></i></div>
+          <div><p class="font-bold text-sm">11 Sub-Ratings</p><p class="text-white/70 text-xs mt-0.5">Beyond just stars</p></div>
+        </div>
+        <div class="flex items-start gap-3 text-white">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="zap"></i></div>
+          <div><p class="font-bold text-sm">MPS Score</p><p class="text-white/70 text-xs mt-0.5">Business intelligence rankings</p></div>
+        </div>
+        <div class="flex items-start gap-3 text-white">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="trending-up"></i></div>
+          <div><p class="font-bold text-sm">Real Insights</p><p class="text-white/70 text-xs mt-0.5">Data-driven discoveries</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Events -->
+    <section class="py-14 page-container hidden" id="events-section">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold flex items-center gap-2">
+            <i data-lucide="calendar" class="w-6 h-6 text-orange-500"></i> Upcoming Events
+          </h2>
+          <p class="text-gray-500 text-sm mt-1">Festivals, competitions & special menus</p>
+        </div>
+        <a href="/events.html" class="text-sm font-medium text-gray-600 hover:text-orange-500 flex items-center gap-1 group">
+          All events <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+        </a>
+      </div>
+      <div id="events-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-16 bg-gray-50 border-t border-gray-100">
+      <div class="page-container text-center">
+        <h2 class="font-black text-3xl mb-4">Own a Misal Restaurant?</h2>
+        <p class="text-gray-500 mb-8 max-w-xl mx-auto">Register your restaurant to respond to reviews, post events, and get access to powerful analytics.</p>
+        <div class="flex gap-4 justify-center">
+          <a href="/discover.html" class="px-6 py-3 border border-gray-200 rounded-xl font-medium hover:bg-gray-100 flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-4 h-4"></i> Find Misal Places
+          </a>
+          <a href="/add-restaurant.html" class="px-6 py-3 bg-gradient-misal text-white rounded-xl font-medium hover:opacity-90 flex items-center gap-2">
+            <i data-lucide="arrow-right" class="w-4 h-4"></i> Register Restaurant
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Visit - TasteKolhapur</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 transition-colors duration-300">
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <div id="status-card" class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 max-w-sm w-full text-center animate-scale-in">
+      
+      <!-- Loading State -->
+      <div id="state-loading">
+        <i data-lucide="loader-2" class="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4"></i>
+        <h2 class="text-xl font-display font-bold">Verifying Visit...</h2>
+        <p class="text-sm text-gray-500 mt-2">Please wait while we verify your location.</p>
+      </div>
+
+      <!-- Success State -->
+      <div id="state-success" class="hidden">
+        <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="check-circle" class="w-8 h-8 text-green-500"></i>
+        </div>
+        <h2 class="text-xl font-display font-bold text-green-600">Visit Verified!</h2>
+        <p id="success-msg" class="text-sm text-gray-600 mt-2">
+          Redirecting you to leave a review...
+        </p>
+      </div>
+
+      <!-- Error State -->
+      <div id="state-error" class="hidden">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="alert-circle" class="w-8 h-8 text-red-500"></i>
+        </div>
+        <h2 class="text-xl font-display font-bold text-red-600">Verification Failed</h2>
+        <p id="error-msg" class="text-sm text-gray-600 mt-2 mb-6">
+          You need to be signed in to verify your visit, or the link is invalid.
+        </p>
+        <a href="/login.html" class="px-8 py-3 bg-gradient-misal text-white rounded-xl font-medium inline-block w-full">Sign In</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { initAuth, subscribeToAuth } from './js/auth.js';
+    import { db } from './js/firebase-config.js';
+    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    initAuth();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const slug = urlParams.get('slug');
+
+      if (!slug) {
+        showState('error', 'Invalid verification link.');
+        return;
+      }
+
+      // Check auth state
+      subscribeToAuth(async (user) => {
+        if (!user) {
+          showState('error', 'You need to be signed in to verify your visit. Please sign in first.');
+          return;
+        }
+
+        try {
+          const q = query(collection(db, 'restaurants'), where('slug', '==', slug));
+          const snap = await getDocs(q);
+          
+          if (snap.empty) {
+            showState('error', 'Restaurant not found.');
+            return;
+          }
+          
+          const restaurantName = snap.docs[0].data().name;
+          
+          // Verify success
+          sessionStorage.setItem(`verified_visit_${slug}`, 'true');
+          
+          document.getElementById('success-msg').textContent = `You're at ${restaurantName}. Redirecting you to leave a review...`;
+          showState('success');
+          
+          setTimeout(() => {
+            window.location.href = `/restaurant.html?slug=${slug}`;
+          }, 2000);
+          
+        } catch (e) {
+          console.error(e);
+          showState('error', 'An error occurred during verification.');
+        }
+      });
+    });
+
+    function showState(state, msg = '') {
+      ['loading', 'success', 'error'].forEach(s => {
+        document.getElementById(`state-${s}`).classList.add('hidden');
+      });
+      document.getElementById(`state-${state}`).classList.remove('hidden');
+      if (msg && state === 'error') {
+        document.getElementById('error-msg').textContent = msg;
+      }
+    }
+  </script>
+</body>
+</html>

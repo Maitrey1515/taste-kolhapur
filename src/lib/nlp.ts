@@ -6,6 +6,7 @@ import type { DiscoveryFilters } from '@/types';
 interface ParsedQuery {
   filters: Partial<DiscoveryFilters>;
   cleanedSearch: string;
+  isNearMe: boolean;
 }
 
 // ─── Keyword → filter maps ────────────────────────────────────────────────
@@ -48,6 +49,7 @@ export function parseNLQuery(query: string): ParsedQuery {
   const q = query.toLowerCase().trim();
   const filters: Partial<DiscoveryFilters> = {};
   let cleanedSearch = query;
+  let isNearMe = false;
 
   const removeWord = (word: string) => {
     cleanedSearch = cleanedSearch.replace(new RegExp(word, 'gi'), '').trim();
@@ -78,6 +80,7 @@ export function parseNLQuery(query: string): ParsedQuery {
   }
   if (NEAR_WORDS.some(w => q.includes(w))) {
     filters.max_distance = 5;
+    isNearMe = true;
     NEAR_WORDS.forEach(removeWord);
   }
   if (FAMILY_WORDS.some(w => q.includes(w))) {
@@ -135,7 +138,7 @@ export function parseNLQuery(query: string): ParsedQuery {
   // Clean up extra whitespace
   cleanedSearch = cleanedSearch.replace(/\s+/g, ' ').trim();
 
-  return { filters, cleanedSearch };
+  return { filters, cleanedSearch, isNearMe };
 }
 
 // ─── Detect intent summary (for display) ────────────────────────────────

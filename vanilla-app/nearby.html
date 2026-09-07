@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nearby Misal - TasteKolhapur</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 transition-colors duration-300">
+
+  <div id="navbar-container"></div>
+
+  <main class="page-container py-12 min-h-screen">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+        <i data-lucide="map-pin" class="w-5 h-5 text-orange-500"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl font-display font-bold">Nearby Misal</h1>
+        <p class="text-sm text-gray-500">Find the closest restaurants to your current location</p>
+      </div>
+    </div>
+
+    <!-- Location Prompt -->
+    <div id="location-prompt" class="bg-white p-10 rounded-3xl text-center max-w-lg mx-auto mt-12 shadow-sm border border-gray-100">
+      <i data-lucide="compass" class="w-16 h-16 text-orange-200 mx-auto mb-4"></i>
+      <h2 class="text-xl font-display font-bold mb-2">Location Access Required</h2>
+      <p id="location-msg" class="text-gray-500 text-sm mb-6">
+        Allow TasteKolhapur to access your location to find the best Misal spots near you.
+      </p>
+      <button id="btn-request-location" class="px-8 py-3 bg-gradient-misal text-white rounded-xl font-medium flex items-center justify-center gap-2 mx-auto w-full">
+        <i data-lucide="navigation" class="w-5 h-5"></i> Find Misal Near Me
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="flex flex-col items-center justify-center py-20 hidden">
+      <div class="animate-spin w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full mb-4"></div>
+      <p id="loading-text" class="text-gray-500">Getting your precise location...</p>
+    </div>
+
+    <!-- Results -->
+    <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 hidden">
+      <!-- Populated by JS -->
+    </div>
+  </main>
+
+  <script type="module" src="js/nearby.js"></script>
+</body>
+</html>

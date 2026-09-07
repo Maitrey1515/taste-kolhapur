@@ -4,6 +4,7 @@ import { Search, Sparkles, Trophy, MapPin, Calendar, ArrowRight, Star, TrendingU
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, limit, getDocs, where, getDoc, doc } from 'firebase/firestore';
 import type { Restaurant, RestaurantEvent } from '@/types';
+import { isFirebaseConfigured } from '@/lib/firebase';
 import RestaurantCard from '@/components/RestaurantCard';
 import EventCard from '@/components/EventCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -22,6 +23,7 @@ export default function Home() {
 
       // 1. Fetch Restaurants Independently
       try {
+        if (!isFirebaseConfigured) throw new Error("Firebase not configured");
         const restaurantsSnap = await getDocs(collection(db, 'restaurants'));
         const restaurants = restaurantsSnap.docs
           .map(d => ({ id: d.id, ...d.data() } as Restaurant))
@@ -35,6 +37,7 @@ export default function Home() {
 
       // 2. Fetch Events Independently
       try {
+        if (!isFirebaseConfigured) throw new Error("Firebase not configured");
         const eventsSnap = await getDocs(query(
           collection(db, 'restaurant_events'), 
           where('start_date', '>=', new Date().toISOString().split('T')[0]), 
@@ -66,7 +69,14 @@ export default function Home() {
       navigate('/discover');
       return;
     }
-    const { filters, cleanedSearch } = parseNLQuery(search);
+    const { filters, cleanedSearch, isNearMe } = parseNLQuery(search);
+    
+    // Redirect to nearby page if user explicitly asked for "near me"
+    if (isNearMe) {
+      navigate('/nearby');
+      return;
+    }
+
     const params = new URLSearchParams();
     if (cleanedSearch) params.set('q', cleanedSearch);
     Object.entries(filters).forEach(([k, v]) => {
@@ -95,7 +105,7 @@ export default function Home() {
         {/* Background image */}
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=1600&q=85"
+            src="/hero-bg.jpg"
             alt="Kolhapur Misal"
             className="w-full h-full object-cover"
           />

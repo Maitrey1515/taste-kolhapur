@@ -66,6 +66,10 @@ export default function RestaurantDetail() {
       setRestaurant(data as Restaurant);
       setLoading(false);
       loadReviews(data.id);
+    }).catch(err => {
+      console.error(err);
+      showToast({ type: 'error', title: 'Error', message: 'Failed to load restaurant details.' });
+      setLoading(false);
     });
   }, [slug]);
 
@@ -120,7 +124,7 @@ export default function RestaurantDetail() {
     setSubmitting(true);
     // Spam heuristics
     const fakeScore = computeFakeScore({
-      reviewText, overallRating, previousReviews: reviews.filter(r => r.user_id === user.id)
+      reviewText, overallRating, previousReviews: reviews.filter(r => r.user_id === user.uid)
     });
 
     try {
@@ -223,6 +227,11 @@ export default function RestaurantDetail() {
               </div>
             </div>
             <div className="flex gap-2">
+              {restaurant.phone && (
+                <a href={`tel:${restaurant.phone}`} className="btn btn-primary bg-green-500 border-green-500 hover:bg-green-600 shadow-lg mr-2 text-white">
+                  <Phone className="w-4 h-4" /> Call Now
+                </a>
+              )}
               <button
                 onClick={() => navigator.share?.({ title: restaurant.name, url: window.location.href }).catch(() => {})}
                 className="btn-icon bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
@@ -355,7 +364,7 @@ export default function RestaurantDetail() {
                     key={review.id}
                     review={review}
                     onHelpful={handleHelpful}
-                    isOwner={profile?.role === 'owner' && restaurant.owner_id === user?.id}
+                    isOwner={profile?.role === 'owner' && restaurant.owner_id === user?.uid}
                     onReply={handleOwnerReply}
                   />
                 ))}
@@ -676,7 +685,7 @@ function computeReviewSummary(reviews: Review[]) {
   const subAvgs: Record<string, number> = {};
   const SUB_KEYS = Object.keys(reviews[0].sub_ratings);
   SUB_KEYS.forEach(k => {
-    subAvgs[k] = reviews.reduce((s, r) => s + (r.sub_ratings as Record<string, number>)[k], 0) / reviews.length;
+    subAvgs[k] = reviews.reduce((s, r) => s + (r.sub_ratings as unknown as Record<string, number>)[k], 0) / reviews.length;
   });
   const lowestKey = Object.entries(subAvgs).sort((a, b) => a[1] - b[1])[0]?.[0];
   const COMPLAINT_MAP: Record<string, string> = {

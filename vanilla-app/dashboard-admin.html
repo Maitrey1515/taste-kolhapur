@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - TasteKolhapur</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 transition-colors duration-300">
+
+  <div id="navbar-container"></div>
+
+  <main class="page-container py-8 space-y-8 min-h-screen">
+    
+    <div id="loading-state" class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full mb-4"></div>
+      <p class="text-gray-500">Loading admin dashboard...</p>
+    </div>
+
+    <div id="dashboard-content" class="hidden space-y-8">
+      
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+          <i data-lucide="shield" class="w-5 h-5 text-purple-600"></i>
+        </div>
+        <h1 class="text-2xl font-display font-bold">Admin Overview</h1>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <div class="flex items-center gap-3 mb-2">
+            <i data-lucide="store" class="w-5 h-5 text-gray-400"></i>
+            <p class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Restaurants</p>
+          </div>
+          <p class="text-3xl font-display font-black text-gray-900" id="stat-rest-count">-</p>
+        </div>
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <div class="flex items-center gap-3 mb-2">
+            <i data-lucide="users" class="w-5 h-5 text-gray-400"></i>
+            <p class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Users</p>
+          </div>
+          <p class="text-3xl font-display font-black text-gray-900" id="stat-user-count">-</p>
+        </div>
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <div class="flex items-center gap-3 mb-2">
+            <i data-lucide="message-square" class="w-5 h-5 text-gray-400"></i>
+            <p class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Reviews</p>
+          </div>
+          <p class="text-3xl font-display font-black text-gray-900" id="stat-review-count">-</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+        <h2 class="text-xl font-display font-bold mb-4">Pending Restaurants</h2>
+        <div id="pending-list" class="space-y-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module" src="js/dashboard-admin.js"></script>
+</body>
+</html>

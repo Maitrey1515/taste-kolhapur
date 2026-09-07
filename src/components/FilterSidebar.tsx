@@ -75,7 +75,7 @@ export default function FilterSidebar({ filters, onChange, onReset, className }:
             )}
           </div>
           {activeCount > 0 && (
-            <button onClick={onReset} className="text-xs text-orange-500 hover:underline flex items-center gap-1">
+            <button type="button" onClick={onReset} className="text-xs text-orange-500 hover:underline flex items-center gap-1">
               <X className="w-3 h-3" /> Reset
             </button>
           )}
@@ -101,6 +101,7 @@ export default function FilterSidebar({ filters, onChange, onReset, className }:
         <Section title="Area" open={expanded.area} onToggle={() => toggle('area')}>
           <div className="space-y-1 max-h-44 overflow-y-auto scrollbar-hide">
             <button
+              type="button"
               onClick={() => set('area', '')}
               className={clsx('w-full text-left px-2 py-1.5 rounded-lg text-xs transition-all',
                 !filters.area ? 'bg-orange-500 text-white' : 'hover:bg-[var(--surface-secondary)] text-[var(--text-secondary)]'
@@ -110,6 +111,7 @@ export default function FilterSidebar({ filters, onChange, onReset, className }:
             </button>
             {AREAS.map(area => (
               <button
+                type="button"
                 key={area}
                 onClick={() => set('area', filters.area === area ? '' : area)}
                 className={clsx('w-full text-left px-2 py-1.5 rounded-lg text-xs transition-all',
@@ -129,6 +131,7 @@ export default function FilterSidebar({ filters, onChange, onReset, className }:
           <div className="flex gap-2">
             {([null, 1, 2, 3, 4] as const).map(level => (
               <button
+                type="button"
                 key={level ?? 'all'}
                 onClick={() => set('price_level', level)}
                 className={clsx(
@@ -174,7 +177,13 @@ export default function FilterSidebar({ filters, onChange, onReset, className }:
         <Section title="Features" open={expanded.features} onToggle={() => toggle('features')}>
           <div className="space-y-2">
             {FEATURE_TOGGLES.map(({ key, label }) => (
-              <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
+              <label key={key} className="flex items-center gap-2.5 cursor-pointer group select-none">
+                <input 
+                  type="checkbox"
+                  className="hidden"
+                  checked={filters[key] as boolean}
+                  onChange={() => set(key, !filters[key])}
+                />
                 <div
                   className={clsx(
                     'w-4 h-4 rounded border-2 flex items-center justify-center transition-all flex-shrink-0',
@@ -182,7 +191,6 @@ export default function FilterSidebar({ filters, onChange, onReset, className }:
                       ? 'bg-orange-500 border-orange-500'
                       : 'border-[var(--border)] group-hover:border-orange-300'
                   )}
-                  onClick={() => set(key, !filters[key])}
                 >
                   {filters[key] && (
                     <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -190,10 +198,7 @@ export default function FilterSidebar({ filters, onChange, onReset, className }:
                     </svg>
                   )}
                 </div>
-                <span
-                  className="text-xs text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors"
-                  onClick={() => set(key, !filters[key])}
-                >
+                <span className="text-xs text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
                   {label}
                 </span>
               </label>
@@ -214,6 +219,7 @@ function Section({
   return (
     <div className="space-y-2">
       <button
+        type="button"
         onClick={onToggle}
         className="flex items-center justify-between w-full text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
       >

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore';
-import { BarChart3, Users, Settings, Database, Server, RefreshCw, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { BarChart3, Users, Settings, Database, Server, RefreshCw, AlertTriangle, ShieldAlert, CheckCircle } from 'lucide-react';
 import { showToast } from '@/components/Toast';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import LoadingSpinner from '@/components/LoadingSpinner';
