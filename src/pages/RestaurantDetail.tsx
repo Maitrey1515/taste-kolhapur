@@ -148,6 +148,19 @@ export default function RestaurantDetail() {
         helpful_count: 0,
         created_at: new Date().toISOString()
       });
+
+      const currentReviewCount = restaurant.review_count || 0;
+      const currentTasteScore = restaurant.taste_score || 0;
+      const newReviewCount = currentReviewCount + 1;
+      const newTasteScore = ((currentTasteScore * currentReviewCount) + overallRating) / newReviewCount;
+
+      await updateDoc(doc(db, 'restaurants', restaurant.id), {
+        review_count: newReviewCount,
+        taste_score: newTasteScore
+      });
+
+      setRestaurant(prev => prev ? { ...prev, review_count: newReviewCount, taste_score: newTasteScore } : null);
+
       setSubmitting(false);
       showToast({ type: 'success', title: 'Review submitted!', message: 'Thank you for your feedback.' });
       setReviewModalOpen(false);

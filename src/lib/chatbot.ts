@@ -268,14 +268,23 @@ export function isRestaurantOpenNow(restaurant: Restaurant): boolean {
 
   if (!hours || hours === 'closed') return false;
 
-  // Parse "10:00-22:00" or "10:00 - 22:00 AM-PM"
-  const match = hours.match(/(\d{1,2}):?(\d{0,2})\s*[-–]\s*(\d{1,2}):?(\d{0,2})/);
+  // Parse "10:00-22:00" or "10:00 AM - 10:00 PM"
+  const match = hours.match(/(\d{1,2}):?(\d{0,2})\s*(am|pm)?\s*[-–to]+\s*(\d{1,2}):?(\d{0,2})\s*(am|pm)?/i);
   if (!match) return true; // can't parse, assume open
 
-  const openH = parseInt(match[1]);
+  let openH = parseInt(match[1]);
   const openM = parseInt(match[2] || '0');
-  const closeH = parseInt(match[3]);
-  const closeM = parseInt(match[4] || '0');
+  let closeH = parseInt(match[4]);
+  const closeM = parseInt(match[5] || '0');
+
+  const openAmPm = match[3] ? match[3].toLowerCase() : null;
+  const closeAmPm = match[6] ? match[6].toLowerCase() : null;
+
+  if (openAmPm === 'pm' && openH < 12) openH += 12;
+  if (openAmPm === 'am' && openH === 12) openH = 0;
+
+  if (closeAmPm === 'pm' && closeH < 12) closeH += 12;
+  if (closeAmPm === 'am' && closeH === 12) closeH = 0;
 
   const openMinutes  = openH  * 60 + openM;
   const closeMinutes = closeH * 60 + closeM;
