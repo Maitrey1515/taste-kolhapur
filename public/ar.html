@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TasteKolhapur AR Experience</title>
+  
+  <!-- Import Google Model Viewer -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  
+  <!-- Tailwind for quick styling to match the main app -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            orange: {
+              500: '#f97316',
+              600: '#ea580c',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body, html { margin: 0; padding: 0; height: 100%; background-color: #000; color: white; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; }
+    model-viewer { width: 100%; height: 100%; background-color: #18181b; }
+    .shadow-glow-orange { box-shadow: 0 0 15px rgba(249, 115, 22, 0.5); }
+    
+    /* Fallback UI if model fails */
+    #error-state { display: none; }
+    model-viewer.show-error #error-state { display: flex; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-10 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
+    <button id="back-btn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 text-white pointer-events-auto transition-colors" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+    </button>
+    <h1 class="font-bold text-lg drop-shadow-md">🍲 3D MISAL</h1>
+    <div class="w-9"></div>
+  </header>
+
+  <!-- 3D Model Viewer -->
+  <model-viewer id="viewer" 
+    shadow-intensity="1" 
+    camera-controls 
+    auto-rotate 
+    ar 
+    ar-modes="webxr scene-viewer quick-look"
+    alt="3D model of Kolhapuri Misal">
+    
+    <!-- AR Button -->
+    <button slot="ar-button" class="absolute bottom-32 left-1/2 -translate-x-1/2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full shadow-glow-orange z-10 flex items-center gap-2 transition-transform active:scale-95 whitespace-nowrap">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+      View in your space
+    </button>
+
+    <!-- Error State Overlay -->
+    <div id="error-state" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10 bg-black pointer-events-auto">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-orange-500 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+      <h2 class="text-xl font-bold mb-2">Unable to load 3D model</h2>
+      <p class="text-gray-400 text-sm mb-6">The AR model for this restaurant could not be loaded right now.</p>
+      <button onclick="history.back()" class="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">Go Back</button>
+    </div>
+  </model-viewer>
+
+  <!-- Overlay Info -->
+  <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-6 pt-20 pointer-events-none">
+    <div class="pointer-events-auto">
+      <h2 id="rest-name" class="font-black text-2xl mb-1">Restaurant</h2>
+      <div class="flex items-center gap-4 text-sm text-gray-300">
+        <div id="rating-container" class="flex items-center gap-1 hidden">
+          <svg class="w-4 h-4 text-amber-500 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span id="rest-rating" class="font-bold text-white"></span>
+        </div>
+        <div id="mps-container" class="flex items-center gap-1 hidden">
+          <svg class="w-4 h-4 text-orange-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+          <span class="font-bold text-white">MPS <span id="rest-mps"></span><span class="text-xs font-normal">/10</span></span>
+        </div>
+        <span id="rest-price" class="font-mono text-green-400 hidden"></span>
+      </div>
+      
+      <button onclick="history.back()" class="w-full mt-4 bg-white/10 border border-white/20 hover:bg-white/20 text-white font-medium py-3 rounded-xl flex justify-center items-center transition-colors">
+        Back to Restaurant
+      </button>
+    </div>
+  </div>
+
+  <!-- Initialize Data -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get('name');
+      const rating = params.get('rating');
+      const mps = params.get('mps');
+      const price = params.get('price');
+      const modelUrl = params.get('model');
+      const scale = params.get('scale');
+
+      // Set model
+      const viewer = document.getElementById('viewer');
+      if (modelUrl) {
+        viewer.src = modelUrl;
+        viewer.iosSrc = modelUrl.replace('.glb', '.usdz');
+      } else {
+        // Fallback testing model
+        viewer.src = 'https://modelviewer.dev/shared-assets/models/Astronaut.glb';
+      }
+
+      if (scale && scale !== '1 1 1') {
+        viewer.setAttribute('ar-scale', 'fixed');
+      }
+
+      // Handle load error
+      viewer.addEventListener('error', (e) => {
+        console.error('Model loading error', e);
+        viewer.classList.add('show-error');
+      });
+
+      // Populate UI
+      if (name) document.getElementById('rest-name').textContent = name;
+      
+      if (rating && rating !== '0') {
+        document.getElementById('rest-rating').textContent = Number(rating).toFixed(1);
+        document.getElementById('rating-container').classList.remove('hidden');
+      }
+
+      if (mps) {
+        document.getElementById('rest-mps').textContent = Number(mps).toFixed(1);
+        document.getElementById('mps-container').classList.remove('hidden');
+      }
+
+      if (price) {
+        document.getElementById('rest-price').textContent = '~₹' + price;
+        document.getElementById('rest-price').classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

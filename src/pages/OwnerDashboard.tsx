@@ -68,11 +68,12 @@ export default function OwnerDashboard() {
           console.error("Failed to fetch events", e);
         }
         
+        let reviewsData: any[] = [];
         // Fetch reviews
         try {
           const reviewsQ = query(collection(db, 'reviews'), where('restaurant_id', '==', data.id), orderBy('created_at', 'desc'));
           const reviewsSnap = await getDocs(reviewsQ);
-          const reviewsData = await Promise.all(reviewsSnap.docs.map(async (d) => {
+          reviewsData = await Promise.all(reviewsSnap.docs.map(async (d) => {
             const review = { id: d.id, ...d.data() } as any;
             if (review.user_id) {
               const uDoc = await getDoc(doc(db, 'profiles', review.user_id));
@@ -95,12 +96,39 @@ export default function OwnerDashboard() {
           console.error("Failed to fetch reviews", e);
         }
         
-        // Generate mock chart data for the BI dashboard
-        setChartData([
-          { name: 'Jan', rating: 4.0 }, { name: 'Feb', rating: 4.1 },
-          { name: 'Mar', rating: 4.3 }, { name: 'Apr', rating: 4.2 },
-          { name: 'May', rating: 4.5 }, { name: 'Jun', rating: 4.4 },
-        ]);
+        // Generate real chart data & stats
+        const allReviews = (reviewsData || []) as Review[];
+        const totalRevs = allReviews.length || data.review_count || 0;
+        const avgOverall = allReviews.length > 0 
+            ? (allReviews.reduce((sum, r) => sum + r.overall_rating, 0) / allReviews.length).toFixed(1)
+            : (data.taste_score || data.google_rating || 0).toFixed(1);
+            
+        setStats({
+          views: totalRevs,
+          scans: data.mps_score ? Number(data.mps_score.toFixed(1)) : 0,
+          recentRating: Number(avgOverall)
+        });
+
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const currentMonth = new Date().getMonth();
+        const trendData = [];
+        for (let i = 5; i >= 0; i--) {
+           let d = new Date();
+           d.setMonth(currentMonth - i);
+           const mName = monthNames[d.getMonth()];
+           const mReviews = allReviews.filter(r => {
+             const rd = new Date(r.created_at);
+             return rd.getMonth() === d.getMonth() && rd.getFullYear() === d.getFullYear();
+           });
+           let mRating = 0;
+           if (mReviews.length > 0) {
+              mRating = mReviews.reduce((sum, r) => sum + r.overall_rating, 0) / mReviews.length;
+           } else {
+              mRating = trendData.length > 0 ? trendData[trendData.length - 1].rating : Number(avgOverall);
+           }
+           trendData.push({ name: mName, rating: Number(mRating.toFixed(1)) });
+        }
+        setChartData(trendData);
       }
       clearTimeout(fallbackTimer);
       setLoading(false);
@@ -262,14 +290,14 @@ export default function OwnerDashboard() {
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="card p-5 border-t-4 border-t-blue-500">
-                <p className="text-sm text-[var(--text-muted)] flex items-center gap-2"><Users className="w-4 h-4"/> Profile Views</p>
+                <p className="text-sm text-[var(--text-muted)] flex items-center gap-2"><Users className="w-4 h-4"/> Total Reviews</p>
                 <p className="text-3xl font-display font-bold text-[var(--text-primary)] mt-2">{stats.views.toLocaleString()}</p>
-                <p className="text-xs text-green-500 mt-1 flex items-center"><TrendingUp className="w-3 h-3 mr-1"/> +12% this week</p>
+                <p className="text-xs text-[var(--text-muted)] mt-1">Verified customer feedback</p>
               </div>
               <div className="card p-5 border-t-4 border-t-purple-500">
-                <p className="text-sm text-[var(--text-muted)] flex items-center gap-2"><QrCode className="w-4 h-4"/> QR Scans</p>
-                <p className="text-3xl font-display font-bold text-[var(--text-primary)] mt-2">{stats.scans}</p>
-                <p className="text-xs text-green-500 mt-1 flex items-center"><TrendingUp className="w-3 h-3 mr-1"/> +5% this week</p>
+                <p className="text-sm text-[var(--text-muted)] flex items-center gap-2"><BarChart2 className="w-4 h-4"/> MPS Score</p>
+                <p className="text-3xl font-display font-bold text-[var(--text-primary)] mt-2">{stats.scans > 0 ? stats.scans : 'N/A'}</p>
+                <p className="text-xs text-[var(--text-muted)] mt-1">Misal Performance Score</p>
               </div>
               <div className="card p-5 border-t-4 border-t-orange-500">
                 <p className="text-sm text-[var(--text-muted)] flex items-center gap-2"><Star className="w-4 h-4"/> Avg Rating</p>

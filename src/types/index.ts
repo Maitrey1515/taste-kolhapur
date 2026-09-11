@@ -93,6 +93,10 @@ export interface Restaurant {
   owner?: Profile;
   mps_score?: number;
   distance_km?: number;
+  // AR fields
+  ar_enabled?: boolean;
+  ar_model_url?: string;
+  ar_model_scale?: string;
 }
 
 // ─── Review ───────────────────────────────────────────────────────────────

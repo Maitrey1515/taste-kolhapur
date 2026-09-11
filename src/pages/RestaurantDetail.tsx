@@ -30,7 +30,7 @@ const SUB_LABELS: Record<keyof ReviewSubRatings, string> = {
   waiting_time: 'Waiting Time', parking: 'Parking', staff_behaviour: 'Staff Behaviour',
 };
 
-const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 export default function RestaurantDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -166,7 +166,7 @@ export default function RestaurantDetail() {
       setReviewModalOpen(false);
       resetForm();
       loadReviews(restaurant.id);
-    } catch(error: any) {
+    } catch (error: any) {
       setSubmitting(false);
       showToast({ type: 'error', title: 'Error', message: error.message });
     }
@@ -191,7 +191,7 @@ export default function RestaurantDetail() {
       });
       showToast({ type: 'success', title: 'Reply posted' });
       loadReviews(restaurant!.id);
-    } catch(err) {
+    } catch (err) {
       showToast({ type: 'error', title: 'Error posting reply' });
     }
   };
@@ -240,13 +240,21 @@ export default function RestaurantDetail() {
               </div>
             </div>
             <div className="flex gap-2">
+              {restaurant.ar_enabled && (
+                <a
+                  href={`/ar.html?name=${encodeURIComponent(restaurant.name)}&rating=${avgScore}&mps=${mps || ''}&price=${restaurant.avg_cost || ''}&model=${encodeURIComponent(restaurant.ar_model_url || '')}&scale=${encodeURIComponent(restaurant.ar_model_scale || '1 1 1')}`}
+                  className="btn bg-orange-500 border-orange-500 hover:bg-orange-600 text-white shadow-[0_0_15px_rgba(249,115,22,0.5)] mr-2 flex items-center gap-2"
+                >
+                  🍲 <span className="hidden sm:inline">View in</span> AR
+                </a>
+              )}
               {restaurant.phone && (
                 <a href={`tel:${restaurant.phone}`} className="btn btn-primary bg-green-500 border-green-500 hover:bg-green-600 shadow-lg mr-2 text-white">
                   <Phone className="w-4 h-4" /> Call Now
                 </a>
               )}
               <button
-                onClick={() => navigator.share?.({ title: restaurant.name, url: window.location.href }).catch(() => {})}
+                onClick={() => navigator.share?.({ title: restaurant.name, url: window.location.href }).catch(() => { })}
                 className="btn-icon bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
               >
                 <Share2 className="w-4 h-4" />
@@ -452,7 +460,7 @@ export default function RestaurantDetail() {
               <h3 className="font-display font-semibold text-[var(--text-primary)] mb-3">Opening Hours</h3>
               <div className="space-y-1">
                 {DAYS.map(day => {
-                  const h = (hours as Record<string, string>)[day.slice(0,3)] ?? hours.default ?? 'N/A';
+                  const h = (hours as Record<string, string>)[day.slice(0, 3)] ?? hours.default ?? 'N/A';
                   const isToday = new Date().toLocaleDateString('en', { weekday: 'long' }).toLowerCase() === day;
                   return (
                     <div key={day} className={clsx('flex justify-between text-xs py-1', isToday && 'text-orange-500 font-semibold')}>
@@ -483,7 +491,7 @@ export default function RestaurantDetail() {
                 ></iframe>
               </div>
               {restaurant.google_place_id && (
-                <a 
+                <a
                   href={`https://www.google.com/maps/place/?q=place_id:${restaurant.google_place_id}`}
                   target="_blank" rel="noopener noreferrer"
                   className="btn btn-secondary w-full mt-3 text-sm"

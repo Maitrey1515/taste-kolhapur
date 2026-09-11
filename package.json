@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/model-viewer": "^4.3.1",
     "@hookform/resolvers": "^3.3.4",
     "@vis.gl/react-google-maps": "^1.9.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "dotenv": "^17.4.2",
     "firebase": "^12.18.0",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.378.0",
