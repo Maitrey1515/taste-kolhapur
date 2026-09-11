@@ -472,22 +472,15 @@ export default function RestaurantDetail() {
             <div className="card p-4 overflow-hidden">
               <h3 className="font-display font-semibold text-[var(--text-primary)] mb-3">Location</h3>
               <div className="h-48 rounded-xl overflow-hidden bg-[var(--surface-secondary)] border border-[var(--border)]">
-                {import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? (
-                  <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-                    <GoogleMap 
-                      defaultCenter={{ lat: restaurant.lat, lng: restaurant.lng }} 
-                      defaultZoom={15}
-                      mapId="DEMO_MAP_ID"
-                      disableDefaultUI
-                    >
-                      <AdvancedMarker position={{ lat: restaurant.lat, lng: restaurant.lng }} />
-                    </GoogleMap>
-                  </APIProvider>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-sm text-[var(--text-muted)] text-center p-4">
-                    <p>Map unavailable.<br/>Configure VITE_GOOGLE_MAPS_API_KEY in .env</p>
-                  </div>
-                )}
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://maps.google.com/maps?q=${restaurant.lat},${restaurant.lng}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                ></iframe>
               </div>
               {restaurant.google_place_id && (
                 <a 
