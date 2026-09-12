@@ -93,6 +93,10 @@ export interface Restaurant {
   owner?: Profile;
   mps_score?: number;
   distance_km?: number;
+  // Meal filters
+  is_breakfast?: boolean;
+  is_lunch?: boolean;
+  is_dinner?: boolean;
   // AR fields
   ar_enabled?: boolean;
   ar_model_url?: string;
@@ -292,6 +296,7 @@ export interface DiscoveryFilters {
   max_wait: number | null;
   max_distance: number | null;
   sort: 'relevance' | 'rating' | 'distance' | 'price_asc' | 'price_desc' | 'reviews' | 'newest';
+  meal?: 'breakfast' | 'lunch' | 'dinner' | 'all';
 }
 
 // ─── QR ──────────────────────────────────────────────────────────────────

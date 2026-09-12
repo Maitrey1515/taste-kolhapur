@@ -14,8 +14,15 @@ const DEFAULT_FILTERS: DiscoveryFilters = {
   search: '', area: '', price_level: null, min_rating: null,
   open_now: false, parking: false, family_friendly: false, ac: false,
   takeaway: false, delivery: false, wheelchair: false, veg: false,
-  max_wait: null, max_distance: null, sort: 'relevance',
+  max_wait: null, max_distance: null, sort: 'relevance', meal: 'all',
 };
+
+function getRecommendedMeal(): 'breakfast' | 'lunch' | 'dinner' {
+  const hr = new Date().getHours();
+  if (hr >= 5 && hr < 11) return 'breakfast';
+  if (hr >= 11 && hr < 16) return 'lunch';
+  return 'dinner';
+}
 
 export default function Discover() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,6 +51,9 @@ export default function Discover() {
           r.address?.toLowerCase().includes(q)
         );
       }
+      if (f.meal === 'breakfast') data = data.filter(r => r.is_breakfast);
+      if (f.meal === 'lunch') data = data.filter(r => r.is_lunch);
+      if (f.meal === 'dinner') data = data.filter(r => r.is_dinner);
       if (f.area) data = data.filter(r => r.area?.toLowerCase().includes(f.area.toLowerCase()));
       if (f.price_level) data = data.filter(r => r.price_level === f.price_level);
       if (f.min_rating) data = data.filter(r => (r.taste_score || 0) >= f.min_rating!);
@@ -102,6 +112,8 @@ export default function Discover() {
     });
 
     if (filters.sort !== 'relevance') params.set('sort', filters.sort);
+    if (filters.meal && filters.meal !== 'all') params.set('meal', filters.meal);
+    
     setSearchParams(params, { replace: true });
   }, [filters, fetchRestaurants, setSearchParams]);
 
@@ -142,9 +154,28 @@ export default function Discover() {
     <main className="page-container py-8 min-h-screen">
       {/* ─── Header + Search ──────────────────────────────────── */}
       <div className="mb-6">
-        <h1 className="text-3xl font-display font-bold text-[var(--text-primary)] mb-4">
-          Discover Misal in Kolhapur
+        <h1 className="text-3xl font-display font-bold text-[var(--text-primary)] mb-4 text-center">
+          What are you looking for?
         </h1>
+        
+        <div className="flex bg-[var(--surface-secondary)] p-1.5 rounded-full w-max mx-auto mb-8 border border-[var(--border)] overflow-x-auto max-w-full">
+          {['breakfast', 'lunch', 'dinner', 'all'].map(m => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setFilters(f => ({ ...f, meal: m as any, page: 0 }))}
+              className={clsx(
+                "px-5 py-2 rounded-full text-sm font-semibold capitalize transition-all whitespace-nowrap",
+                filters.meal === m 
+                  ? "bg-orange-500 text-white shadow-md shadow-orange-500/20" 
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)]"
+              )}
+            >
+              {m === 'breakfast' ? '☀ ' : m === 'lunch' ? '🍛 ' : m === 'dinner' ? '🌙 ' : '🍽️ '}{m}
+            </button>
+          ))}
+        </div>
+
         <form onSubmit={handleSearchSubmit} className="flex gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
@@ -280,5 +311,6 @@ function parseFiltersFromURL(params: URLSearchParams): DiscoveryFilters {
     max_wait:        null,
     max_distance:    params.has('max_distance') ? Number(params.get('max_distance')) : null,
     sort:            (params.get('sort') as DiscoveryFilters['sort']) ?? 'relevance',
+    meal:            (params.get('meal') as any) ?? getRecommendedMeal(),
   };
 }
