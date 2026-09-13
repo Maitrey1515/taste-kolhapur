@@ -118,7 +118,7 @@ Just type naturally and I'll find the right match!`,
         .slice(0, 3);
       return {
         content: cheap.length
-          ? `💰 Here are the most **budget-friendly Misal restaurants**:`
+          ? `💰 Here are the most **budget-friendly restaurants**:`
           : `I couldn't find any budget restaurants right now. Try browsing all restaurants!`,
         restaurants: cheap.length ? cheap : undefined,
       };
@@ -129,7 +129,7 @@ Just type naturally and I'll find the right match!`,
         .sort((a, b) => (b.taste_score ?? 0) - (a.taste_score ?? 0))
         .slice(0, 3);
       return {
-        content: `🌶️ These places are known for their **extra spicy Misal**:`,
+        content: `🌶️ These places are known for their **extra spicy food**:`,
         restaurants: spicy,
       };
     }
@@ -141,7 +141,7 @@ Just type naturally and I'll find the right match!`,
         .slice(0, 3);
       if (nearby.length > 0) {
         return {
-          content: `📍 **Closest Misal restaurants** to your location:`,
+          content: `📍 **Closest restaurants** to your location:`,
           restaurants: nearby,
         };
       }
@@ -170,8 +170,8 @@ Just type naturally and I'll find the right match!`,
         .slice(0, 3);
       return {
         content: family.length
-          ? `👨‍👩‍👧 **Family-friendly Misal restaurants**:`
-          : `I couldn't find specific family-friendly results. Most Misal places welcome families!`,
+          ? `👨‍👩‍👧 **Family-friendly restaurants**:`
+          : `I couldn't find specific family-friendly results. Most places welcome families!`,
         restaurants: family.length ? family : undefined,
       };
     }
@@ -209,8 +209,8 @@ Just type naturally and I'll find the right match!`,
         .slice(0, 3);
       return {
         content: veg.length
-          ? `🌿 **Pure vegetarian Misal restaurants**:`
-          : `Most Misal is inherently vegetarian, but I couldn't find specifically flagged veg-only places. All listed restaurants serve vegetarian Misal!`,
+          ? `🌿 **Pure Veg restaurants**:`
+          : `Most places serve veg options, but these are our top pure veg picks.`,
         restaurants: veg.length ? veg : undefined,
       };
     }
@@ -237,10 +237,10 @@ Just type naturally and I'll find the right match!`,
     default:
       return {
         content: `I didn't quite get that! 😊 You can ask me things like:
-- "Show me cheap misal"
+- "Show me cheap food"
 - "Restaurants open now"  
 - "Family friendly places"
-- "Best rated misal"
+- "Best rated places"
 
 Or type **"help"** to see all options.`,
       };

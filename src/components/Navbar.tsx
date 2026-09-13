@@ -101,7 +101,7 @@ export default function Navbar() {
                      hover:text-[var(--text-primary)] transition-all duration-200 w-48"
         >
           <Search className="w-4 h-4" />
-          <span>Search misal…</span>
+          <span>Search Kolhapur food…</span>
         </Link>
 
         {/* Dark mode toggle */}

@@ -117,16 +117,16 @@ export default function Home() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/20 border border-orange-500/40 backdrop-blur-sm mb-4 animate-fade-in">
               <Sparkles className="w-3.5 h-3.5 text-orange-400" />
-              <span className="text-orange-300 text-xs font-medium">Kolhapur's #1 Misal Discovery Platform</span>
+              <span className="text-orange-300 text-xs font-medium">Kolhapur's #1 Food Discovery Platform</span>
             </div>
 
             {/* Headline */}
             <h1 className="font-display font-black text-5xl sm:text-6xl text-white leading-tight mb-4 animate-slide-up">
-              Find Your Perfect<br />
-              <span className="text-gradient">Misal</span> in Kolhapur
+              Savor the Authentic<br />
+              Flavors of <span className="text-gradient">Kolhapur</span>
             </h1>
             <p className="text-white/70 text-lg mb-8 leading-relaxed animate-slide-up" style={{ animationDelay: '0.1s' }}>
-              Discover, rate, and explore 13+ authentic Misal restaurants across Kolhapur.
+              Discover, rate, and explore 60+ authentic restaurants and eateries across Kolhapur.
               AI-powered recommendations based on your taste.
             </p>
 
@@ -138,8 +138,8 @@ export default function Home() {
                   id="hero-search"
                   type="text"
                   value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  placeholder='Try "cheap spicy misal open now near Rankala"'
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder='Try "best thali near rankala" or "spicy tambda pandhra rassa"'
                   className="w-full pl-12 pr-36 py-4 rounded-2xl bg-white/95 dark:bg-[var(--surface)]/95
                              text-[var(--text-primary)] placeholder-gray-400 text-sm border-0
                              focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-2xl backdrop-blur-sm"
